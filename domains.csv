@@ -1,0 +1,41 @@
+Domain,Definition,Exclusions,Primary Question Answered
+Appeals,"Define and manage formal requests for humanitarian resources in response to crises.
+
+Humanitarian appeals, objectives, priorities, target populations, funding requirements, timelines, and appeal status.  Types of Appeals: Refugee Response Plans, Humanitarian Response Plans, Other Types of Appeals (e.g.: GHRP). Appeals may be part of a predictable periodic cycle such as regular RRPs or they may be provoked by an emergency. Most appeals are general, but some appeals may be thematic (e.g.: Winterization or Covid).",Funding transactions; situation analysis content.,"What assistance is being requested, for whom and why?"
+Funding / Donations,"Track and describe financial and in-kind contributions supporting humanitarian action.
+
+Donors, funding sources, pledges, commitments, disbursements, earmarking, and funding flows.",Appeal definitions; partner implementation details.,"What resources have been provided, by whom, and for what purpose?"
+Emergencies & Situation Definitions,"Provide authoritative definitions and classifications of humanitarian emergencies and situations.
+
+Emergency identifiers, crisis types, severity classifications, activation levels, and geographic and temporal boundaries.",Analytical assessments; risk projections.,What is the emergency or humanitarian situation being addressed?
+Infrastructure,"Describe physical and service-enabling assets relevant to humanitarian response.
+
+Facilities, utilities, transport assets, operational status, and managing authorities.",Services delivered at facilities; geographic boundary definitions.,What physical assets exist and what is their operational status?
+Location,"Provide authoritative geographic definitions and spatial reference structures. 
+
+Administrative boundaries, place names, hierarchies, identifiers, and coordinates.",Population statistics; infrastructure or facility records.,Where are humanitarian data points geographically situated?
+Population Domain,"Define populations affected by or targeted in humanitarian contexts.
+
+Population groups, demographics, displacement status, and vulnerability classifications.",Protection incidents; service delivery records.,Who are the people affected or targeted by humanitarian action?
+Protection & Legal,"Describe protection risks, needs, and incidents affecting populations.
+
+Protection risks, violations, incidents, safeguarding and rights-based concerns.",General risk forecasting; demographic definitions.,What protection risks and violations affect populations?
+Risk Management new,"Identify, assess, and monitor potential risks affecting humanitarian outcomes.
+Hazard exposure, preparedness planning.",Definition of active emergency based on expected or measured impact on population.,To what extent risks could impact humanitarian needs or operations?
+Hazardous events,"History, status, and prediction of the materialization of hazardous events. Data includes definition of risk scenarios, their duration and sverity.","Population impact, exposure, vulnerability assessments, post-disaster response surveys.",What is the status of ongoing and past events that might have an impact on population?
+Indicators,"Define standardized measures used to monitor humanitarian needs and the implementation progress or impact of a humanitarian response.
+
+Indicator definitions, methodologies, units of measure, disaggregations, and quality criteria.",Indicator values; analytical results; reference classifications.,How are humanitarian conditions and outcomes measured?
+Structural Vulnerability & Baseline Conditions,"To define the underlying socio-economic, demographic, and service-access conditions that shape a population’s vulnerability to shocks and their capacity to cope and recover.
+
+The domain covers structural indicators that change over time and are typically drawn from national surveys and administrative systems","This domain measures structural fragility rather than acute shocks.  Excludes real-time needs assessments; displacement tracking, etc.",What underlying conditions increase the probability that a shock will translate into severe humanitarian impact?
+Conflict and political instability,,,
+Healthcare & Education,Economic and Physical access to heathcare & education facilities and services; heath conditions of population.,"Conditions of diseases, outbreaks status;",
+Infrastructure and basic services,"Water, roads, electricity, telecommunication.",,
+Market systems and Economy,"This domain covers structure, functionality, performance and accessibility of markets and economic systems in humanitarian and fragile contexts.","Procurement, immaterial markets, immaterial commodities (e.g.: intellectual property).",To what extent do crisis-affected households have reliable physical and economic access to functioning markets that provide affordable basic goods and services?
+Population financial situation,"The domain helps defining the knowledge, attitude, and practices related to the financial situation of target population.","Organization-related financial data;
+data on financial institutions",To what extent the situation is suitable for an intervention that relates to financial instruments?
+Humanitarian Needs,"Consolidated figures of the humanitarian needs of the population, indicating the gap between the population socio-economic status and the respect of basic human rights.",,
+Services,"Describe humanitarian assistance and services delivered to populations.
+
+Service types, delivery modalities, coverage, and access constraints.",Physical infrastructure assets; funding details.,"What assistance is being delivered, and how?"

@@ -1,0 +1,1720 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow">
+    <title>Humanitarian Core Data API Catalogue</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --hdx-green: rgb(0, 173, 120);
+            --dark-green: rgb(0, 138, 96);
+            --text-dark: #2c3e50;
+            --text-medium: #4a5568;
+            --text-light: #718096;
+            --border-color: #e2e8f0;
+            --bg-light: #f7fafc;
+            --white: #ffffff;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Source Sans Pro', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            color: var(--text-dark);
+            line-height: 1.5;
+            background: var(--bg-light);
+            font-size: 14px;
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, var(--hdx-green) 0%, var(--dark-green) 100%);
+            color: var(--white);
+            padding: 1.5rem 0;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 1.5rem;
+        }
+
+        .header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.75rem;
+        }
+
+        .header h1 {
+            font-family: 'Source Sans Pro', Georgia, serif;
+            font-size: 1.75rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            letter-spacing: -0.02em;
+        }
+
+        .last-updated {
+            font-size: 0.85rem;
+            opacity: 0.9;
+            font-weight: 400;
+        }
+
+        .header p {
+            font-size: 0.95rem;
+            opacity: 0.95;
+            max-width: 800px;
+            line-height: 1.5;
+        }
+
+        .header-nav {
+            margin-top: 1rem;
+            display: flex;
+            gap: 1rem;
+        }
+
+        .header-nav a {
+            color: var(--white);
+            text-decoration: none;
+            font-weight: 600;
+            padding: 0.4rem 0.8rem;
+            border-radius: 4px;
+            transition: background-color 0.2s;
+            font-size: 0.9rem;
+        }
+
+        .header-nav a:hover {
+            background-color: rgba(255, 255, 255, 0.15);
+        }
+
+        /* Main Container */
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 1.5rem;
+        }
+
+        /* Filter Section */
+        .filter-section {
+            background: var(--white);
+            padding: 1.25rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            margin-bottom: 1.25rem;
+            border-left: 4px solid var(--hdx-green);
+        }
+
+        .filter-section h2 {
+            font-size: 1rem;
+            margin-bottom: 0.75rem;
+            color: var(--text-dark);
+            font-weight: 700;
+        }
+
+        .filters {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.4rem;
+        }
+
+        .filter-group label {
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: var(--text-medium);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        select, input[type="text"] {
+            padding: 0.4rem 0.6rem;
+            border: 2px solid var(--border-color);
+            border-radius: 6px;
+            font-size: 0.85rem;
+            font-family: inherit;
+            transition: all 0.2s;
+            background: var(--white);
+        }
+
+        select[multiple] {
+            min-height: 120px;
+        }
+
+        select:focus, input[type="text"]:focus {
+            outline: none;
+            border-color: var(--hdx-green);
+            box-shadow: 0 0 0 3px rgba(0, 173, 120, 0.1);
+        }
+
+        /* Custom Multi-select Dropdown */
+        .custom-multiselect {
+            position: relative;
+        }
+
+        .multiselect-toggle {
+            width: 100%;
+            padding: 0.4rem 0.6rem;
+            border: 2px solid var(--border-color);
+            border-radius: 6px;
+            background: var(--white);
+            text-align: left;
+            cursor: pointer;
+            font-size: 0.85rem;
+            font-family: inherit;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.2s;
+        }
+
+        .multiselect-toggle:hover {
+            border-color: var(--hdx-green);
+        }
+
+        .multiselect-toggle:focus {
+            outline: none;
+            border-color: var(--hdx-green);
+            box-shadow: 0 0 0 3px rgba(0, 173, 120, 0.1);
+        }
+
+        .dropdown-arrow {
+            font-size: 0.7rem;
+            transition: transform 0.2s;
+        }
+
+        .multiselect-toggle.active .dropdown-arrow {
+            transform: rotate(180deg);
+        }
+
+        .multiselect-dropdown {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            margin-top: 0.25rem;
+            background: var(--white);
+            border: 2px solid var(--hdx-green);
+            border-radius: 6px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            z-index: 1000;
+            max-height: 350px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .multiselect-search {
+            padding: 0.5rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .multiselect-search input {
+            width: 100%;
+            padding: 0.4rem 0.6rem;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            font-size: 0.8rem;
+        }
+
+        .multiselect-options {
+            overflow-y: auto;
+            max-height: 250px;
+            padding: 0.25rem 0;
+        }
+
+        .multiselect-option {
+            padding: 0.4rem 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            cursor: pointer;
+            transition: background-color 0.15s;
+            font-size: 0.85rem;
+        }
+
+        .multiselect-option:hover {
+            background-color: var(--bg-light);
+        }
+
+        .multiselect-option input[type="checkbox"] {
+            cursor: pointer;
+            margin: 0;
+            width: 16px;
+            height: 16px;
+        }
+
+        .multiselect-option label {
+            cursor: pointer;
+            flex: 1;
+            margin: 0;
+            text-transform: none;
+            letter-spacing: normal;
+            font-size: 0.85rem;
+            font-weight: 400;
+            color: var(--text-dark);
+        }
+
+        .multiselect-actions {
+            padding: 0.5rem;
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .multiselect-btn {
+            flex: 1;
+            padding: 0.35rem 0.5rem;
+            background: var(--white);
+            color: var(--hdx-green);
+            border: 1px solid var(--hdx-green);
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .multiselect-btn:hover {
+            background: var(--hdx-green);
+            color: var(--white);
+        }
+
+        .filter-actions {
+            display: flex;
+            gap: 0.75rem;
+            margin-top: 1rem;
+        }
+
+        .reset-btn, .select-all-btn {
+            padding: 0.4rem 0.85rem;
+            background: var(--text-medium);
+            color: var(--white);
+            border: none;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 0.8rem;
+        }
+
+        .select-all-btn {
+            background: var(--hdx-green);
+        }
+
+        .reset-btn:hover {
+            background: var(--text-dark);
+            transform: translateY(-1px);
+        }
+
+        .select-all-btn:hover {
+            background: var(--dark-green);
+            transform: translateY(-1px);
+        }
+
+        /* View Toggle */
+        .view-toggle {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .view-buttons {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .view-btn {
+            padding: 0.4rem 0.85rem;
+            background: var(--white);
+            color: var(--text-medium);
+            border: 2px solid var(--border-color);
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 0.8rem;
+        }
+
+        .view-btn.active {
+            background: var(--hdx-green);
+            color: var(--white);
+            border-color: var(--hdx-green);
+        }
+
+        .view-btn.export-btn {
+            background: var(--bg-light);
+            color: var(--text-medium);
+            border: 1px solid var(--border-color);
+            font-size: 0.75rem;
+            padding: 0.35rem 0.7rem;
+            font-weight: 500;
+        }
+
+        .view-btn.export-btn:hover {
+            background: var(--white);
+            border-color: var(--text-medium);
+            color: var(--text-dark);
+        }
+
+        .view-btn:hover:not(.active):not(.export-btn) {
+            border-color: var(--hdx-green);
+            color: var(--hdx-green);
+        }
+
+        .results-info {
+            font-size: 0.9rem;
+            color: var(--text-medium);
+            font-weight: 600;
+        }
+
+        /* Table View */
+        .table-view {
+            background: var(--white);
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            overflow-x: auto;
+        }
+
+        .datasets-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.85rem;
+        }
+
+        .datasets-table thead {
+            background: var(--bg-light);
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        .datasets-table th {
+            padding: 0.75rem;
+            text-align: left;
+            font-weight: 700;
+            color: var(--text-dark);
+            border-bottom: 2px solid var(--border-color);
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            cursor: pointer;
+            user-select: none;
+            white-space: nowrap;
+        }
+
+        /* Specific column widths */
+        .datasets-table th:nth-child(1) { width: 40px; } /* Expand button */
+        .datasets-table th:nth-child(2) { width: 15%; } /* Dataset name */
+        .datasets-table th:nth-child(3) { width: 12%; } /* Organization */
+        .datasets-table th:nth-child(4) { width: 10%; } /* Domain */
+        .datasets-table th:nth-child(5) { width: 35%; } /* Description - widest */
+        .datasets-table th:nth-child(6) { width: 15%; } /* Key Metadata */
+        .datasets-table th:nth-child(7) { width: 13%; } /* Links */
+
+        .datasets-table th:hover {
+            background: var(--border-color);
+        }
+
+        .datasets-table th.sortable::after {
+            content: ' ⇅';
+            opacity: 0.3;
+            font-size: 0.9em;
+        }
+
+        .datasets-table th.sorted-asc::after {
+            content: ' ▲';
+            opacity: 1;
+            color: var(--hdx-green);
+        }
+
+        .datasets-table th.sorted-desc::after {
+            content: ' ▼';
+            opacity: 1;
+            color: var(--hdx-green);
+        }
+
+        .datasets-table td {
+            padding: 0.75rem;
+            border-bottom: 1px solid var(--border-color);
+            color: var(--text-medium);
+            vertical-align: top;
+        }
+
+        .datasets-table tbody tr {
+            transition: background-color 0.2s;
+        }
+
+        .datasets-table tbody tr:hover {
+            background: var(--bg-light);
+        }
+
+        .datasets-table tbody tr.expanded {
+            background: #f0f9f6;
+        }
+
+        /* Expand button */
+        .expand-btn {
+            background: var(--hdx-green);
+            color: var(--white);
+            border: none;
+            width: 24px;
+            height: 24px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 700;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+
+        .expand-btn:hover {
+            background: var(--dark-green);
+        }
+
+        .expand-btn.expanded::before {
+            content: '−';
+        }
+
+        .expand-btn:not(.expanded)::before {
+            content: '+';
+        }
+
+        /* Expanded row */
+        .expanded-row {
+            display: none;
+        }
+
+        .expanded-row.show {
+            display: table-row;
+        }
+
+        .expanded-content {
+            padding: 1.5rem;
+            background: #f0f9f6;
+            border-left: 4px solid var(--hdx-green);
+        }
+
+        .expanded-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.25rem;
+        }
+
+        .expanded-item {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+
+        .expanded-label {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--hdx-green);
+            font-weight: 700;
+        }
+
+        .expanded-value {
+            color: var(--text-dark);
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+
+        /* Badges and links */
+        .table-domain-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, var(--hdx-green), var(--dark-green));
+            color: var(--white);
+            padding: 0.25rem 0.6rem;
+            border-radius: 4px;
+            font-size: 0.7rem;
+            font-weight: 700;
+        }
+
+        .table-dataset-name {
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 0.25rem;
+        }
+
+        .table-owner {
+            font-size: 0.8rem;
+            color: var(--text-light);
+        }
+
+        .table-description {
+            font-size: 0.85rem;
+            line-height: 1.4;
+            max-width: 400px;
+        }
+
+        .table-metadata {
+            font-size: 0.8rem;
+            line-height: 1.5;
+        }
+
+        .table-metadata-item {
+            margin-bottom: 0.25rem;
+        }
+
+        .table-metadata-label {
+            font-weight: 700;
+            color: var(--text-dark);
+        }
+
+        .table-links {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .table-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+            padding: 0.25rem 0.5rem;
+            background: var(--hdx-green);
+            color: var(--white);
+            text-decoration: none;
+            border-radius: 4px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+
+        .table-link:hover {
+            background: var(--dark-green);
+            transform: translateY(-1px);
+        }
+
+        .table-link.secondary {
+            background: var(--bg-light);
+            color: var(--hdx-green);
+            border: 1px solid var(--hdx-green);
+        }
+
+        .table-link.secondary:hover {
+            background: var(--hdx-green);
+            color: var(--white);
+        }
+
+        /* Card View Styles */
+        .datasets-grid {
+            display: grid;
+            gap: 0.75rem;
+        }
+
+        .dataset-card {
+            background: var(--white);
+            padding: 1rem;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s;
+            border-left: 3px solid var(--border-color);
+            cursor: pointer;
+        }
+
+        .dataset-card:hover {
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.12);
+            transform: translateY(-1px);
+            border-left-color: var(--hdx-green);
+        }
+
+        .dataset-card.expanded {
+            border-left-color: var(--hdx-green);
+        }
+
+        .dataset-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            gap: 1rem;
+        }
+
+        .dataset-title {
+            flex: 1;
+        }
+
+        .dataset-title h3 {
+            font-size: 1.1rem;
+            color: var(--text-dark);
+            margin-bottom: 0.25rem;
+            font-weight: 700;
+            line-height: 1.3;
+        }
+
+        .dataset-owner {
+            font-size: 0.85rem;
+            color: var(--text-medium);
+            font-weight: 600;
+        }
+
+        .domain-badge {
+            background: linear-gradient(135deg, var(--hdx-green), var(--dark-green));
+            color: var(--white);
+            padding: 0.35rem 0.75rem;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            white-space: nowrap;
+        }
+
+        .dataset-description {
+            color: var(--text-medium);
+            margin-top: 0.5rem;
+            line-height: 1.5;
+            font-size: 0.9rem;
+        }
+
+        .expand-toggle {
+            margin-top: 0.75rem;
+            color: var(--hdx-green);
+            font-size: 0.85rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+
+        .expand-toggle::after {
+            content: '▼';
+            font-size: 0.7rem;
+            transition: transform 0.2s;
+        }
+
+        .dataset-card.expanded .expand-toggle::after {
+            transform: rotate(180deg);
+        }
+
+        .dataset-expanded-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+        }
+
+        .dataset-card.expanded .dataset-expanded-content {
+            max-height: 2000px;
+        }
+
+        .dataset-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 0.75rem;
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .detail-item {
+            display: flex;
+            flex-direction: column;
+            gap: 0.15rem;
+        }
+
+        .detail-label {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-light);
+            font-weight: 700;
+        }
+
+        .detail-value {
+            color: var(--text-dark);
+            font-size: 0.85rem;
+        }
+
+        .dataset-links {
+            display: flex;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+            padding-top: 1rem;
+            border-top: 1px solid var(--border-color);
+            margin-top: 1rem;
+        }
+
+        .link-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            padding: 0.5rem 1rem;
+            background: var(--hdx-green);
+            color: var(--white);
+            text-decoration: none;
+            border-radius: 6px;
+            font-weight: 700;
+            font-size: 0.8rem;
+            transition: all 0.2s;
+        }
+
+        .link-btn:hover {
+            background: var(--dark-green);
+            transform: translateY(-2px);
+        }
+
+        .link-btn.secondary {
+            background: var(--white);
+            color: var(--hdx-green);
+            border: 2px solid var(--hdx-green);
+        }
+
+        .link-btn.secondary:hover {
+            background: var(--hdx-green);
+            color: var(--white);
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 3rem 1.5rem;
+            background: var(--white);
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+
+        .empty-state-icon {
+            font-size: 3rem;
+            margin-bottom: 0.75rem;
+            opacity: 0.3;
+        }
+
+        .empty-state h3 {
+            font-size: 1.25rem;
+            margin-bottom: 0.4rem;
+            color: var(--text-medium);
+        }
+
+        .empty-state p {
+            color: var(--text-light);
+            font-size: 0.9rem;
+        }
+
+        /* Loading State */
+        .loading {
+            text-align: center;
+            padding: 3rem 1.5rem;
+            color: var(--text-medium);
+        }
+
+        .loading-spinner {
+            border: 3px solid var(--border-color);
+            border-top: 3px solid var(--hdx-green);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 0.75rem;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Footer */
+        .footer {
+            background: var(--text-dark);
+            color: var(--white);
+            padding: 2rem 0;
+            margin-top: 3rem;
+        }
+
+        .footer-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+        }
+
+        .footer-text {
+            opacity: 0.8;
+            font-size: 0.85rem;
+        }
+
+        .footer-logos {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        .footer-logo {
+            display: inline-block;
+            opacity: 0.9;
+            transition: opacity 0.2s;
+        }
+
+        .footer-logo:hover {
+            opacity: 1;
+        }
+
+        .footer-logo img {
+            height: 40px;
+            width: auto;
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .filters {
+                grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 1.5rem;
+            }
+
+            .filters {
+                grid-template-columns: 1fr;
+            }
+
+            .filter-actions {
+                flex-direction: column;
+            }
+
+            .footer-content {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .footer-logos {
+                flex-direction: column;
+                gap: 1rem;
+            }
+        }
+
+        /* Multi-select helper text */
+        .filter-hint {
+            font-size: 0.7rem;
+            color: var(--text-light);
+            font-style: italic;
+            margin-top: 0.25rem;
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="header-content">
+            <div class="header-top">
+                <h1>Humanitarian Core Data API Catalogue</h1>
+                <div class="last-updated" id="last-updated">Last updated: <span id="update-date">Loading...</span></div>
+            </div>
+            <p>Browse and discover core humanitarian datasets with comprehensive metadata, API access, and technical documentation.</p>
+            <nav class="header-nav">
+                <a href="index.html">Catalogue</a>
+                <a href="domains.html">Domain Definitions</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="container">
+        <section class="filter-section">
+            <h2>Filter Datasets</h2>
+            <div class="filters">
+                <div class="filter-group">
+                    <label for="domain-filter">Domain</label>
+                    <select id="domain-filter">
+                        <option value="">All Domains</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label for="org-filter">Organization</label>
+                    <select id="org-filter">
+                        <option value="">All Organizations</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label for="country-filter">Countries</label>
+                    <select id="country-filter">
+                        <option value="">All Countries</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label for="freq-filter">Publication Frequency</label>
+                    <select id="freq-filter">
+                        <option value="">All Frequencies</option>
+                        <option value="Daily">Daily</option>
+                        <option value="Weekly">Weekly</option>
+                        <option value="Monthly">Monthly</option>
+                        <option value="Bi-monthly">Bi-monthly</option>
+                        <option value="Quarterly">Quarterly</option>
+                        <option value="Annually">Annually</option>
+                    </select>
+                </div>
+                <div class="filter-group" id="dimensions-filter-group" style="display: none;">
+                    <label for="dimensions-filter">Dimensions</label>
+                    <select id="dimensions-filter">
+                        <option value="">All Dimensions</option>
+                    </select>
+                    <div class="filter-hint">Tags like "real-time", "validated"</div>
+                </div>
+                <div class="filter-group">
+                    <label for="search-filter">Search</label>
+                    <input type="text" id="search-filter" placeholder="Search datasets...">
+                </div>
+                <div class="filter-group">
+                    <label for="dataset-select-toggle">Select Datasets</label>
+                    <div class="custom-multiselect">
+                        <button type="button" class="multiselect-toggle" id="dataset-select-toggle" onclick="toggleDatasetDropdown()">
+                            <span id="dataset-select-label">All datasets</span>
+                            <span class="dropdown-arrow">▼</span>
+                        </button>
+                        <div class="multiselect-dropdown" id="dataset-dropdown" style="display: none;">
+                            <div class="multiselect-search">
+                                <input type="text" id="dataset-search" placeholder="Search datasets..." onkeyup="filterDatasetOptions()">
+                            </div>
+                            <div class="multiselect-options" id="dataset-options">
+                                <!-- Populated dynamically -->
+                            </div>
+                            <div class="multiselect-actions">
+                                <button type="button" onclick="selectAllDatasetsCheckbox()" class="multiselect-btn">Select All</button>
+                                <button type="button" onclick="clearAllDatasetsCheckbox()" class="multiselect-btn">Clear All</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="filter-actions">
+                <button class="reset-btn" onclick="resetFilters()">Reset All Filters</button>
+                <button class="select-all-btn" onclick="selectAllDatasets()">Select All Datasets</button>
+            </div>
+        </section>
+
+        <div class="view-toggle">
+            <div class="results-info" id="results-info">
+                Loading datasets...
+            </div>
+            <div class="view-buttons">
+                <button class="view-btn" onclick="switchView('cards')" id="cards-btn">📋 Cards</button>
+                <button class="view-btn active" onclick="switchView('table')" id="table-btn">📊 Table</button>
+                <button class="view-btn export-btn" onclick="exportToCSV()">⬇️ Export CSV</button>
+                <button class="view-btn export-btn" onclick="exportToExcel()">⬇️ Export Excel</button>
+            </div>
+        </div>
+
+        <div id="datasets-container">
+            <div class="loading">
+                <div class="loading-spinner"></div>
+                <p>Loading datasets...</p>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-text">
+                <p>Humanitarian Core Data API Catalogue</p>
+                <p style="font-size: 0.75rem; opacity: 0.6; margin-top: 0.25rem;">Contact your data team for updates or corrections</p>
+            </div>
+            <div class="footer-logos">
+                <a href="https://data.humdata.org" target="_blank" class="footer-logo" title="Humanitarian Data Exchange">
+                    <svg width="120" height="40" viewBox="0 0 120 40" fill="none">
+                        <text x="10" y="25" font-family="Source Sans Pro" font-weight="700" font-size="18" fill="white">HDX</text>
+                    </svg>
+                </a>
+                <a href="https://centre.humdata.org" target="_blank" class="footer-logo" title="Centre for Humanitarian Data">
+                    <svg width="160" height="40" viewBox="0 0 160 40" fill="none">
+                        <text x="10" y="25" font-family="Source Sans Pro" font-weight="600" font-size="14" fill="white">HUMANITARIAN</text>
+                        <text x="10" y="36" font-family="Source Sans Pro" font-weight="600" font-size="10" fill="rgba(255,255,255,0.7)">DATA CENTRE</text>
+                    </svg>
+                </a>
+                <a href="https://www.unocha.org" target="_blank" class="footer-logo" title="OCHA">
+                    <svg width="100" height="40" viewBox="0 0 100 40" fill="none">
+                        <text x="10" y="25" font-family="Source Sans Pro" font-weight="700" font-size="20" fill="white">OCHA</text>
+                    </svg>
+                </a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        let allDatasets = [];
+        let filteredDatasets = [];
+        let currentView = 'table';
+        let sortColumn = null;
+        let sortDirection = 'asc';
+        let selectedDatasetNames = [];
+
+        // Set last updated date (automatic from CSV file modification would require server-side)
+        // For now, set to current date
+        document.getElementById('update-date').textContent = new Date().toLocaleDateString('en-US', { 
+            year: 'numeric', 
+            month: 'long', 
+            day: 'numeric' 
+        });
+
+        // Load and parse CSV
+        async function loadDatasets() {
+            try {
+                const response = await fetch('datasets.csv');
+                const csvText = await response.text();
+                allDatasets = parseCSV(csvText);
+                filteredDatasets = [...allDatasets];
+                
+                populateFilters();
+                renderDatasets();
+            } catch (error) {
+                document.getElementById('datasets-container').innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">⚠️</div>
+                        <h3>Error Loading Datasets</h3>
+                        <p>Unable to load datasets.csv. Please check the file exists and is properly formatted.</p>
+                    </div>
+                `;
+                console.error('Error loading datasets:', error);
+            }
+        }
+
+        // Simple CSV parser
+        function parseCSV(text) {
+            const lines = text.trim().split('\n');
+            const headers = lines[0].split(',').map(h => h.trim());
+            
+            return lines.slice(1).map(line => {
+                const values = parseCSVLine(line);
+                const dataset = {};
+                headers.forEach((header, index) => {
+                    dataset[header] = values[index] ? values[index].trim() : '';
+                });
+                return dataset;
+            }).filter(d => d['Dataset Name']);
+        }
+
+        // Handle CSV with commas in quoted fields
+        function parseCSVLine(line) {
+            const result = [];
+            let current = '';
+            let inQuotes = false;
+            
+            for (let i = 0; i < line.length; i++) {
+                const char = line[i];
+                if (char === '"') {
+                    inQuotes = !inQuotes;
+                } else if (char === ',' && !inQuotes) {
+                    result.push(current);
+                    current = '';
+                } else {
+                    current += char;
+                }
+            }
+            result.push(current);
+            return result;
+        }
+
+        // Populate filter dropdowns
+        function populateFilters() {
+            // Domains
+            const domains = [...new Set(allDatasets.map(d => d.Domain).filter(Boolean))].sort();
+            const domainSelect = document.getElementById('domain-filter');
+            domains.forEach(domain => {
+                const option = document.createElement('option');
+                option.value = domain;
+                option.textContent = domain;
+                domainSelect.appendChild(option);
+            });
+
+            // Organizations
+            const orgs = [...new Set(allDatasets.map(d => d['Owner / Lead']).filter(Boolean))].sort();
+            const orgSelect = document.getElementById('org-filter');
+            orgs.forEach(org => {
+                const option = document.createElement('option');
+                option.value = org;
+                option.textContent = org;
+                orgSelect.appendChild(option);
+            });
+
+            // Countries
+            const countries = [...new Set(allDatasets.map(d => d.Countries).filter(Boolean))].sort();
+            const countrySelect = document.getElementById('country-filter');
+            countries.forEach(country => {
+                const option = document.createElement('option');
+                option.value = country;
+                option.textContent = country;
+                countrySelect.appendChild(option);
+            });
+
+            // Dimensions (tags) - auto-enables if data is present
+            const allDimensions = [...new Set(allDatasets.flatMap(d => 
+                d.Dimensions ? d.Dimensions.split(';').map(dim => dim.trim()) : []
+            ))].filter(Boolean).sort();
+            
+            if (allDimensions.length > 0) {
+                const dimensionsSelect = document.getElementById('dimensions-filter');
+                const dimensionsGroup = document.getElementById('dimensions-filter-group');
+                
+                allDimensions.forEach(dim => {
+                    const option = document.createElement('option');
+                    option.value = dim;
+                    option.textContent = dim;
+                    dimensionsSelect.appendChild(option);
+                });
+                
+                // Show the filter
+                dimensionsGroup.style.display = 'flex';
+            }
+
+            // Dataset checkbox dropdown
+            const datasetOptions = document.getElementById('dataset-options');
+            allDatasets.forEach((dataset, index) => {
+                const option = document.createElement('div');
+                option.className = 'multiselect-option';
+                option.innerHTML = `
+                    <input type="checkbox" id="dataset-${index}" value="${dataset['Dataset Name']}" onchange="updateDatasetSelection()">
+                    <label for="dataset-${index}">${dataset['Dataset Name']} (${dataset['Owner / Lead']})</label>
+                `;
+                datasetOptions.appendChild(option);
+            });
+        }
+
+        // Toggle dataset dropdown
+        function toggleDatasetDropdown() {
+            const dropdown = document.getElementById('dataset-dropdown');
+            const toggle = document.getElementById('dataset-select-toggle');
+            
+            if (dropdown.style.display === 'none') {
+                dropdown.style.display = 'flex';
+                toggle.classList.add('active');
+                // Close when clicking outside
+                setTimeout(() => {
+                    document.addEventListener('click', closeDropdownOnClickOutside);
+                }, 0);
+            } else {
+                dropdown.style.display = 'none';
+                toggle.classList.remove('active');
+                document.removeEventListener('click', closeDropdownOnClickOutside);
+            }
+        }
+
+        function closeDropdownOnClickOutside(event) {
+            const dropdown = document.getElementById('dataset-dropdown');
+            const toggle = document.getElementById('dataset-select-toggle');
+            const container = dropdown.parentElement;
+            
+            if (!container.contains(event.target)) {
+                dropdown.style.display = 'none';
+                toggle.classList.remove('active');
+                document.removeEventListener('click', closeDropdownOnClickOutside);
+            }
+        }
+
+        // Filter dataset options in dropdown
+        function filterDatasetOptions() {
+            const search = document.getElementById('dataset-search').value.toLowerCase();
+            const options = document.querySelectorAll('.multiselect-option');
+            
+            options.forEach(option => {
+                const text = option.textContent.toLowerCase();
+                option.style.display = text.includes(search) ? 'flex' : 'none';
+            });
+        }
+
+        // Select all datasets checkbox
+        function selectAllDatasetsCheckbox() {
+            const checkboxes = document.querySelectorAll('#dataset-options input[type="checkbox"]');
+            const visibleCheckboxes = Array.from(checkboxes).filter(cb => cb.parentElement.style.display !== 'none');
+            visibleCheckboxes.forEach(cb => cb.checked = true);
+            updateDatasetSelection();
+        }
+
+        // Clear all datasets checkbox
+        function clearAllDatasetsCheckbox() {
+            const checkboxes = document.querySelectorAll('#dataset-options input[type="checkbox"]');
+            checkboxes.forEach(cb => cb.checked = false);
+            updateDatasetSelection();
+        }
+
+        // Update dataset selection and label
+        function updateDatasetSelection() {
+            const checkboxes = document.querySelectorAll('#dataset-options input[type="checkbox"]:checked');
+            selectedDatasetNames = Array.from(checkboxes).map(cb => cb.value);
+            
+            const label = document.getElementById('dataset-select-label');
+            if (selectedDatasetNames.length === 0) {
+                label.textContent = 'All datasets';
+            } else if (selectedDatasetNames.length === 1) {
+                label.textContent = '1 dataset selected';
+            } else {
+                label.textContent = `${selectedDatasetNames.length} datasets selected`;
+            }
+            
+            applyFilters();
+        }
+
+        // Select all datasets (original button)
+        function selectAllDatasets() {
+            selectAllDatasetsCheckbox();
+        }
+
+        // Apply filters
+        function applyFilters() {
+            const domainFilter = document.getElementById('domain-filter').value.toLowerCase();
+            const orgFilter = document.getElementById('org-filter').value.toLowerCase();
+            const searchFilter = document.getElementById('search-filter').value.toLowerCase();
+            const countryFilter = document.getElementById('country-filter').value.toLowerCase();
+            const freqFilter = document.getElementById('freq-filter').value.toLowerCase();
+            const dimensionsFilter = document.getElementById('dimensions-filter').value.toLowerCase();
+
+            filteredDatasets = allDatasets.filter(dataset => {
+                const matchesDomain = !domainFilter || dataset.Domain.toLowerCase() === domainFilter;
+                const matchesOrg = !orgFilter || dataset['Owner / Lead'].toLowerCase() === orgFilter;
+                const matchesSearch = !searchFilter || 
+                    dataset['Dataset Name'].toLowerCase().includes(searchFilter) ||
+                    dataset['Owner / Lead'].toLowerCase().includes(searchFilter) ||
+                    dataset.Description.toLowerCase().includes(searchFilter);
+                const matchesCountry = !countryFilter || dataset.Countries.toLowerCase() === countryFilter;
+                const matchesFreq = !freqFilter || dataset['Data Publication frequency'].toLowerCase() === freqFilter;
+                const matchesDimensions = !dimensionsFilter || 
+                    (dataset.Dimensions && dataset.Dimensions.toLowerCase().includes(dimensionsFilter));
+                const matchesDatasetSelection = selectedDatasetNames.length === 0 || selectedDatasetNames.includes(dataset['Dataset Name']);
+
+                return matchesDomain && matchesOrg && matchesSearch && matchesCountry && matchesFreq && matchesDimensions && matchesDatasetSelection;
+            });
+
+            renderDatasets();
+        }
+
+        // Reset filters
+        function resetFilters() {
+            document.getElementById('domain-filter').value = '';
+            document.getElementById('org-filter').value = '';
+            document.getElementById('search-filter').value = '';
+            document.getElementById('country-filter').value = '';
+            document.getElementById('freq-filter').value = '';
+            document.getElementById('dimensions-filter').value = '';
+            
+            // Clear dataset checkboxes
+            const checkboxes = document.querySelectorAll('#dataset-options input[type="checkbox"]');
+            checkboxes.forEach(cb => cb.checked = false);
+            selectedDatasetNames = [];
+            document.getElementById('dataset-select-label').textContent = 'All datasets';
+            
+            sortColumn = null;
+            sortDirection = 'asc';
+            applyFilters();
+        }
+
+        // Switch view
+        function switchView(view) {
+            currentView = view;
+            document.getElementById('cards-btn').classList.toggle('active', view === 'cards');
+            document.getElementById('table-btn').classList.toggle('active', view === 'table');
+            renderDatasets();
+        }
+
+        // Sort table
+        function sortTable(column) {
+            if (sortColumn === column) {
+                sortDirection = sortDirection === 'asc' ? 'desc' : 'asc';
+            } else {
+                sortColumn = column;
+                sortDirection = 'asc';
+            }
+
+            filteredDatasets.sort((a, b) => {
+                let valA = a[column] || '';
+                let valB = b[column] || '';
+                
+                const numA = parseFloat(valA);
+                const numB = parseFloat(valB);
+                if (!isNaN(numA) && !isNaN(numB)) {
+                    return sortDirection === 'asc' ? numA - numB : numB - numA;
+                }
+                
+                valA = valA.toString().toLowerCase();
+                valB = valB.toString().toLowerCase();
+                
+                if (sortDirection === 'asc') {
+                    return valA.localeCompare(valB);
+                } else {
+                    return valB.localeCompare(valA);
+                }
+            });
+
+            renderDatasets();
+        }
+
+        // Toggle row expansion
+        function toggleRow(index) {
+            const expandedRow = document.getElementById(`expanded-${index}`);
+            const expandBtn = document.getElementById(`expand-btn-${index}`);
+            const mainRow = expandBtn.closest('tr');
+            
+            if (expandedRow.classList.contains('show')) {
+                expandedRow.classList.remove('show');
+                expandBtn.classList.remove('expanded');
+                mainRow.classList.remove('expanded');
+            } else {
+                expandedRow.classList.add('show');
+                expandBtn.classList.add('expanded');
+                mainRow.classList.add('expanded');
+            }
+        }
+
+        // Toggle card expansion
+        function toggleCard(index) {
+            const card = document.querySelector(`[data-index="${index}"]`);
+            if (card) {
+                card.classList.toggle('expanded');
+            }
+        }
+
+        // Render datasets
+        function renderDatasets() {
+            const container = document.getElementById('datasets-container');
+            const resultsInfo = document.getElementById('results-info');
+
+            resultsInfo.textContent = `${filteredDatasets.length} dataset${filteredDatasets.length !== 1 ? 's' : ''}`;
+
+            if (filteredDatasets.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">🔍</div>
+                        <h3>No Datasets Found</h3>
+                        <p>Try adjusting your filters or search terms.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            if (currentView === 'table') {
+                container.innerHTML = createTableView();
+            } else {
+                container.innerHTML = `
+                    <div class="datasets-grid">
+                        ${filteredDatasets.map((dataset, index) => createDatasetCard(dataset, index)).join('')}
+                    </div>
+                `;
+            }
+        }
+
+        // Create table view with expandable rows
+        function createTableView() {
+            let tableHTML = `
+                <div class="table-view">
+                    <table class="datasets-table">
+                        <thead>
+                            <tr>
+                                <th style="width: 40px;"></th>
+                                <th class="sortable ${sortColumn === 'Dataset Name' ? 'sorted-' + sortDirection : ''}" onclick="sortTable('Dataset Name')">Dataset</th>
+                                <th class="sortable ${sortColumn === 'Owner / Lead' ? 'sorted-' + sortDirection : ''}" onclick="sortTable('Owner / Lead')">Organization</th>
+                                <th class="sortable ${sortColumn === 'Domain' ? 'sorted-' + sortDirection : ''}" onclick="sortTable('Domain')">Domain</th>
+                                <th>Description</th>
+                                <th>Key Metadata</th>
+                                <th>Links</th>
+                            </tr>
+                        </thead>
+                        <tbody>`;
+            
+            filteredDatasets.forEach((dataset, index) => {
+                tableHTML += createTableRow(dataset, index);
+                tableHTML += createExpandedRow(dataset, index);
+            });
+            
+            tableHTML += `
+                        </tbody>
+                    </table>
+                </div>
+            `;
+            
+            return tableHTML;
+        }
+
+        // Create table row
+        function createTableRow(dataset, index) {
+            const metadata = [];
+            
+            if (dataset['Data Publication frequency']) {
+                metadata.push(`<div class="table-metadata-item"><span class="table-metadata-label">Pub. Freq:</span> ${dataset['Data Publication frequency']}</div>`);
+            }
+            if (dataset.Countries) {
+                const countries = dataset.Countries.length > 50 ? dataset.Countries.substring(0, 50) + '...' : dataset.Countries;
+                metadata.push(`<div class="table-metadata-item"><span class="table-metadata-label">Countries:</span> ${countries}</div>`);
+            }
+            if (dataset['Geographical disaggregation']) {
+                metadata.push(`<div class="table-metadata-item"><span class="table-metadata-label">Geo Level:</span> ${dataset['Geographical disaggregation']}</div>`);
+            }
+            
+            return `
+                <tr>
+                    <td>
+                        <button class="expand-btn" id="expand-btn-${index}" onclick="toggleRow(${index})"></button>
+                    </td>
+                    <td>
+                        <div class="table-dataset-name">${dataset['Dataset Name']}</div>
+                    </td>
+                    <td>
+                        <div class="table-owner">${dataset['Owner / Lead'] || '-'}</div>
+                    </td>
+                    <td>
+                        ${dataset.Domain ? `<span class="table-domain-badge">${dataset.Domain}</span>` : '-'}
+                    </td>
+                    <td>
+                        <div class="table-description">${dataset.Description || '-'}</div>
+                    </td>
+                    <td>
+                        <div class="table-metadata">
+                            ${metadata.join('') || '-'}
+                        </div>
+                    </td>
+                    <td>
+                        <div class="table-links">
+                            ${dataset['API or main ingestion source'] ? `<a href="${dataset['API or main ingestion source']}" class="table-link" target="_blank">API</a>` : ''}
+                            ${dataset['HDX Link'] ? `<a href="${dataset['HDX Link']}" class="table-link secondary" target="_blank">HDX</a>` : ''}
+                            ${dataset['Data dictionary / Schema'] ? `<a href="${dataset['Data dictionary / Schema']}" class="table-link secondary" target="_blank">Schema</a>` : ''}
+                        </div>
+                    </td>
+                </tr>
+            `;
+        }
+
+        // Create expanded row content
+        function createExpandedRow(dataset, index) {
+            const expandedFields = [
+                { label: 'Sources', value: dataset.Sources },
+                { label: 'Data Collection Frequency', value: dataset['Data collection frequency / ingestion'] },
+                { label: 'Disaggregation', value: dataset.Disaggregation },
+                { label: 'License', value: dataset.License },
+                { label: 'Other Technical Considerations', value: dataset['Other technical considerations'] }
+            ].filter(field => field.value);
+
+            return `
+                <tr class="expanded-row" id="expanded-${index}">
+                    <td colspan="7">
+                        <div class="expanded-content">
+                            <div class="expanded-grid">
+                                ${expandedFields.map(field => `
+                                    <div class="expanded-item">
+                                        <span class="expanded-label">${field.label}</span>
+                                        <span class="expanded-value">${field.value}</span>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+            `;
+        }
+
+        // Create dataset card HTML (same as before)
+        function createDatasetCard(dataset, index) {
+            return `
+                <article class="dataset-card" data-index="${index}" onclick="toggleCard(${index})">
+                    <div class="dataset-header">
+                        <div class="dataset-title">
+                            <h3>${dataset['Dataset Name']}</h3>
+                            <div class="dataset-owner">${dataset['Owner / Lead']}</div>
+                        </div>
+                        ${dataset.Domain ? `<div class="domain-badge">${dataset.Domain}</div>` : ''}
+                    </div>
+
+                    <p class="dataset-description">${dataset.Description || 'No description available.'}</p>
+
+                    <div class="expand-toggle">Show details</div>
+
+                    <div class="dataset-expanded-content">
+                        <div class="dataset-details">
+                            ${dataset.Sources ? `
+                                <div class="detail-item">
+                                    <span class="detail-label">Sources</span>
+                                    <span class="detail-value">${dataset.Sources}</span>
+                                </div>
+                            ` : ''}
+                            ${dataset['Data collection frequency / ingestion'] ? `
+                                <div class="detail-item">
+                                    <span class="detail-label">Collection Frequency</span>
+                                    <span class="detail-value">${dataset['Data collection frequency / ingestion']}</span>
+                                </div>
+                            ` : ''}
+                            ${dataset['Data Publication frequency'] ? `
+                                <div class="detail-item">
+                                    <span class="detail-label">Publication Frequency</span>
+                                    <span class="detail-value">${dataset['Data Publication frequency']}</span>
+                                </div>
+                            ` : ''}
+                            ${dataset.Disaggregation ? `
+                                <div class="detail-item">
+                                    <span class="detail-label">Disaggregation</span>
+                                    <span class="detail-value">${dataset.Disaggregation}</span>
+                                </div>
+                            ` : ''}
+                            ${dataset.Countries ? `
+                                <div class="detail-item">
+                                    <span class="detail-label">Countries</span>
+                                    <span class="detail-value">${dataset.Countries}</span>
+                                </div>
+                            ` : ''}
+                            ${dataset['Geographical disaggregation'] ? `
+                                <div class="detail-item">
+                                    <span class="detail-label">Geographical Disaggregation</span>
+                                    <span class="detail-value">${dataset['Geographical disaggregation']}</span>
+                                </div>
+                            ` : ''}
+                            ${dataset.License ? `
+                                <div class="detail-item">
+                                    <span class="detail-label">License</span>
+                                    <span class="detail-value">${dataset.License}</span>
+                                </div>
+                            ` : ''}
+                        </div>
+
+                        ${createLinksSection(dataset)}
+
+                        ${dataset['Other technical considerations'] ? `
+                            <div class="detail-item" style="margin-top: 0.75rem; padding-top: 0.75rem; border-top: 1px solid var(--border-color);">
+                                <span class="detail-label">Technical Considerations</span>
+                                <span class="detail-value">${dataset['Other technical considerations']}</span>
+                            </div>
+                        ` : ''}
+                    </div>
+                </article>
+            `;
+        }
+
+        // Create links section
+        function createLinksSection(dataset) {
+            const links = [];
+            
+            if (dataset['API or main ingestion source']) {
+                links.push(`<a href="${dataset['API or main ingestion source']}" class="link-btn" target="_blank" onclick="event.stopPropagation()">🔗 API</a>`);
+            }
+            if (dataset['HDX Link']) {
+                links.push(`<a href="${dataset['HDX Link']}" class="link-btn secondary" target="_blank" onclick="event.stopPropagation()">📊 HDX</a>`);
+            }
+            if (dataset['Data dictionary / Schema']) {
+                links.push(`<a href="${dataset['Data dictionary / Schema']}" class="link-btn secondary" target="_blank" onclick="event.stopPropagation()">📖 Schema</a>`);
+            }
+
+            return links.length > 0 ? `<div class="dataset-links">${links.join('')}</div>` : '';
+        }
+
+        // Export to CSV
+        function exportToCSV() {
+            const headers = [
+                'Dataset Name', 'Owner / Lead', 'Domain', 'Description', 'Sources',
+                'Data collection frequency / ingestion', 'Data Publication frequency',
+                'Disaggregation', 'Countries', 'Geographical disaggregation',
+                'Data dictionary / Schema', 'API or main ingestion source', 'HDX Link',
+                'License', 'Other technical considerations'
+            ];
+
+            let csvContent = headers.join(',') + '\n';
+
+            filteredDatasets.forEach(dataset => {
+                const row = headers.map(header => {
+                    let value = dataset[header] || '';
+                    // Escape quotes and wrap in quotes if contains comma, quote, or newline
+                    if (value.includes(',') || value.includes('"') || value.includes('\n')) {
+                        value = '"' + value.replace(/"/g, '""') + '"';
+                    }
+                    return value;
+                });
+                csvContent += row.join(',') + '\n';
+            });
+
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            const url = URL.createObjectURL(blob);
+            
+            const timestamp = new Date().toISOString().split('T')[0];
+            link.setAttribute('href', url);
+            link.setAttribute('download', `humanitarian_datasets_${timestamp}.csv`);
+            link.style.visibility = 'hidden';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        // Export to Excel
+        function exportToExcel() {
+            const headers = [
+                'Dataset Name', 'Owner / Lead', 'Domain', 'Description', 'Sources',
+                'Data collection frequency / ingestion', 'Data Publication frequency',
+                'Disaggregation', 'Countries', 'Geographical disaggregation',
+                'Data dictionary / Schema', 'API or main ingestion source', 'HDX Link',
+                'License', 'Other technical considerations'
+            ];
+
+            // Create HTML table
+            let tableHTML = '<table><thead><tr>';
+            headers.forEach(header => {
+                tableHTML += `<th>${header}</th>`;
+            });
+            tableHTML += '</tr></thead><tbody>';
+
+            filteredDatasets.forEach(dataset => {
+                tableHTML += '<tr>';
+                headers.forEach(header => {
+                    const value = dataset[header] || '';
+                    tableHTML += `<td>${value.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</td>`;
+                });
+                tableHTML += '</tr>';
+            });
+            tableHTML += '</tbody></table>';
+
+            // Create a Blob with the table
+            const blob = new Blob([`
+                <html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40">
+                <head>
+                    <meta charset="utf-8">
+                    <!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet>
+                    <x:Name>Datasets</x:Name>
+                    <x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet>
+                    </x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]-->
+                    <style>
+                        table { border-collapse: collapse; }
+                        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+                        th { background-color: #00ad78; color: white; font-weight: bold; }
+                    </style>
+                </head>
+                <body>${tableHTML}</body>
+                </html>
+            `], { type: 'application/vnd.ms-excel' });
+
+            const link = document.createElement('a');
+            const url = URL.createObjectURL(blob);
+            
+            const timestamp = new Date().toISOString().split('T')[0];
+            link.setAttribute('href', url);
+            link.setAttribute('download', `humanitarian_datasets_${timestamp}.xls`);
+            link.style.visibility = 'hidden';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        // Event listeners
+        document.getElementById('domain-filter').addEventListener('change', applyFilters);
+        document.getElementById('org-filter').addEventListener('change', applyFilters);
+        document.getElementById('search-filter').addEventListener('input', applyFilters);
+        document.getElementById('country-filter').addEventListener('change', applyFilters);
+        document.getElementById('freq-filter').addEventListener('change', applyFilters);
+        document.getElementById('dimensions-filter').addEventListener('change', applyFilters);
+
+        // Load datasets on page load
+        loadDatasets();
+    </script>
+</body>
+</html>
