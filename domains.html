@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,265 +7,11 @@
     <title>Domain Definitions - Humanitarian Core Data API Catalogue</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@400;600;700&display=swap"
-        rel="stylesheet">
-    <style>
-        :root {
-            --hdx-green: rgb(0, 173, 120);
-            --dark-green: rgb(0, 138, 96);
-            --text-dark: #2c3e50;
-            --text-medium: #4a5568;
-            --text-light: #718096;
-            --border-color: #e2e8f0;
-            --bg-light: #f7fafc;
-            --white: #ffffff;
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Source Sans Pro', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-            color: var(--text-dark);
-            line-height: 1.5;
-            background: var(--bg-light);
-            font-size: 14px;
-        }
-
-        /* Header */
-        .header {
-            background: linear-gradient(135deg, var(--hdx-green) 0%, var(--dark-green) 100%);
-            color: var(--white);
-            padding: 1.5rem 0;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        }
-
-        .header-content {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 1.5rem;
-        }
-
-        .header-top {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 0.75rem;
-        }
-
-        .last-updated {
-            font-size: 0.85rem;
-            opacity: 0.9;
-            font-weight: 400;
-        }
-
-        .header h1 {
-            font-family: 'Source Sans Pro', Georgia, serif;
-            font-size: 1.75rem;
-            font-weight: 700;
-            margin-bottom: 0.5rem;
-            letter-spacing: -0.02em;
-        }
-
-        .header p {
-            font-size: 0.95rem;
-            opacity: 0.95;
-            max-width: 800px;
-            line-height: 1.5;
-        }
-
-        .header-nav {
-            margin-top: 1rem;
-            display: flex;
-            gap: 1rem;
-        }
-
-        .header-nav a {
-            color: var(--white);
-            text-decoration: none;
-            font-weight: 600;
-            padding: 0.4rem 0.8rem;
-            border-radius: 4px;
-            transition: background-color 0.2s;
-            font-size: 0.9rem;
-        }
-
-        .header-nav a:hover {
-            background-color: rgba(255, 255, 255, 0.15);
-        }
-
-        /* Main Container */
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 1.5rem 1.5rem;
-        }
-
-        /* Intro Section */
-        .intro-section {
-            background: var(--white);
-            padding: 1.25rem;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-            margin-bottom: 2rem;
-            border-left: 4px solid var(--hdx-green);
-        }
-
-        .intro-section h2 {
-            font-size: 1.1rem;
-            margin-bottom: 0.75rem;
-            color: var(--text-dark);
-        }
-
-        .intro-section p {
-            color: var(--text-medium);
-            line-height: 1.6;
-            font-size: 0.9rem;
-        }
-
-        /* Domain Cards */
-        .domains-grid {
-            display: grid;
-            gap: 1.25rem;
-        }
-
-        .domain-card {
-            background: var(--white);
-            padding: 1.5rem;
-            border-radius: 8px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            border-left: 4px solid var(--hdx-green);
-        }
-
-        .domain-card:hover {
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
-            transform: translateY(-1px);
-        }
-
-        .domain-header {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            margin-bottom: 1rem;
-            padding-bottom: 1rem;
-            border-bottom: 2px solid var(--border-color);
-        }
-
-        .domain-icon {
-            font-size: 2rem;
-            line-height: 1;
-        }
-
-        .domain-header h3 {
-            font-size: 1.35rem;
-            color: var(--text-dark);
-            font-weight: 700;
-            flex: 1;
-        }
-
-        .domain-section {
-            margin-bottom: 1.25rem;
-        }
-
-        .domain-section:last-child {
-            margin-bottom: 0;
-        }
-
-        .section-label {
-            font-size: 0.7rem;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            color: var(--hdx-green);
-            font-weight: 700;
-            margin-bottom: 0.4rem;
-        }
-
-        .section-content {
-            color: var(--text-medium);
-            line-height: 1.6;
-            font-size: 0.9rem;
-        }
-
-        .section-content ul {
-            margin-left: 1.5rem;
-            margin-top: 0.5rem;
-        }
-
-        .section-content li {
-            margin-bottom: 0.5rem;
-        }
-
-        .question-highlight {
-            background: linear-gradient(135deg, rgba(30, 191, 179, 0.1), rgba(19, 143, 133, 0.1));
-            padding: 1rem;
-            border-radius: 6px;
-            border-left: 4px solid var(--hdx-green);
-            font-size: 0.95rem;
-            font-weight: 600;
-            color: var(--text-dark);
-            line-height: 1.5;
-        }
-
-        /* Loading State */
-        .loading {
-            text-align: center;
-            padding: 3rem 1.5rem;
-            color: var(--text-medium);
-        }
-
-        .loading-spinner {
-            border: 3px solid var(--border-color);
-            border-top: 3px solid var(--hdx-green);
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            animation: spin 1s linear infinite;
-            margin: 0 auto 0.75rem;
-        }
-
-        @keyframes spin {
-            0% {
-                transform: rotate(0deg);
-            }
-
-            100% {
-                transform: rotate(360deg);
-            }
-        }
-
-        /* Footer */
-        .footer {
-            background: var(--text-dark);
-            color: var(--white);
-            padding: 1.5rem 0;
-            margin-top: 3rem;
-            text-align: center;
-        }
-
-        .footer p {
-            opacity: 0.8;
-            font-size: 0.85rem;
-        }
-
-        /* Responsive */
-        @media (max-width: 768px) {
-            .header h1 {
-                font-size: 2rem;
-            }
-
-            .domain-header {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 1rem;
-            }
+    <link href="https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
         }
     </style>
 </head>
-
 <body>
     <header class="header">
         <div class="header-content">
@@ -274,8 +19,7 @@
                 <h1>Humanitarian Core Data API Catalogue</h1>
                 <div class="last-updated" id="last-updated">Last updated: <span id="update-date"></span></div>
             </div>
-            <p>Browse and discover core humanitarian datasets with comprehensive metadata, API access, and technical
-                documentation.</p>
+            <p>Browse and discover core humanitarian datasets with comprehensive metadata, API access, and technical documentation.</p>
             <nav class="header-nav">
                 <a href="index.html">Catalogue</a>
                 <a href="domains.html">Domain Definitions</a>
@@ -286,9 +30,7 @@
     <main class="container">
         <section class="intro-section">
             <h2>About Domain Definitions</h2>
-            <p>Each domain represents a distinct category of humanitarian data with clearly defined boundaries. These
-                definitions help ensure consistency in how we categorize datasets and clarify what type of information
-                falls within each domain's scope.</p>
+            <p>Each domain represents a distinct category of humanitarian data with clearly defined boundaries. These definitions help ensure consistency in how we categorize datasets and clarify what type of information falls within each domain's scope.</p>
         </section>
 
         <div id="domains-container">
@@ -305,24 +47,30 @@
 
     <script>
         // Set last updated date
-        document.getElementById('update-date').textContent = new Date().toLocaleDateString('en-US', {
-            year: 'numeric',
-            month: 'long',
-            day: 'numeric'
+        document.getElementById('update-date').textContent = new Date().toLocaleDateString('en-US', { 
+            year: 'numeric', 
+            month: 'long', 
+            day: 'numeric' 
         });
 
         // Domain icons mapping
         const domainIcons = {
-            'Health': '🏥',
-            'Food Security': '🌾',
-            'Education': '📚',
-            'Protection': '🛡️',
-            'WASH': '💧',
+            'Appeals': '📢',
+            'Funding / Donations': '💰',
+            'Emergencies & Situation Definitions': '🚨',
+            'Infrastructure': '🏗️',
+            'Location': '📍',
+            'Population Domain': '👥',
+            'Protection & Legal': '🛡️',
+            'Humanitarian Needs': '🆘',
+            'Services': '🤝',
+            'Coordination': '🔄',
             'Shelter': '🏠',
+            'Food Security': '🌾',
+            'Health': '🏥',
+            'Education': '📚',
+            'WASH': '💧',
             'Nutrition': '🥗',
-            'Livelihoods': '💼',
-            'Logistics': '📦',
-            'Population': '👥',
             'Default': '📊'
         };
 
@@ -346,7 +94,7 @@
         function parseCSV(text) {
             const lines = text.trim().split('\n');
             const headers = lines[0].split(',').map(h => h.trim());
-
+            
             return lines.slice(1).map(line => {
                 const values = parseCSVLine(line);
                 const domain = {};
@@ -361,7 +109,7 @@
             const result = [];
             let current = '';
             let inQuotes = false;
-
+            
             for (let i = 0; i < line.length; i++) {
                 const char = line[i];
                 if (char === '"') {
@@ -379,7 +127,7 @@
 
         function renderDomains(domains) {
             const container = document.getElementById('domains-container');
-
+            
             if (domains.length === 0) {
                 container.innerHTML = `
                     <div class="empty-state">
@@ -399,7 +147,7 @@
 
         function createDomainCard(domain) {
             const icon = domainIcons[domain.Domain] || domainIcons['Default'];
-
+            
             return `
                 <article class="domain-card">
                     <div class="domain-header">
@@ -435,5 +183,4 @@
         loadDomains();
     </script>
 </body>
-
 </html>
