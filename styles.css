@@ -99,12 +99,12 @@ body {
 /* Ensure content doesn't touch edges on very wide screens */
 @media (min-width: 1920px) {
     .container {
-        max-width: 1800px;
+        max-width: 1600px;
     }
     
     .header-content,
     .footer-content {
-        max-width: 1800px;
+        max-width: 1600px;
     }
 }
 
