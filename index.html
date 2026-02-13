@@ -133,8 +133,8 @@
                 </a>
                 <a href="https://centre.humdata.org" target="_blank" class="footer-logo" title="Centre for Humanitarian Data">
                     <svg width="160" height="40" viewBox="0 0 160 40" fill="none">
-                        <text x="10" y="25" font-family="Source Sans Pro" font-weight="600" font-size="14" fill="white">Centre for</text>
-                        <text x="10" y="36" font-family="Source Sans Pro" font-weight="600" font-size="10" fill="rgba(255,255,255,0.7)">Humanitarian Data</text>
+                        <text x="10" y="25" font-family="Source Sans Pro" font-weight="600" font-size="14" fill="white">HUMANITARIAN</text>
+                        <text x="10" y="36" font-family="Source Sans Pro" font-weight="600" font-size="10" fill="rgba(255,255,255,0.7)">DATA CENTRE</text>
                     </svg>
                 </a>
                 <a href="https://www.unocha.org" target="_blank" class="footer-logo" title="OCHA">
@@ -150,14 +150,13 @@
         // Simple password protection
         if (sessionStorage.getItem("hdx_auth") !== "authorized") {
             const password = prompt("🔒 Enter password to access the catalogue:");
-            if (password !== "humanitarian2026") {
+            if (!password || password !== "humanitarian2026") {
                 document.body.innerHTML = `
                     <div style="display: flex; align-items: center; justify-content: center; height: 100vh; flex-direction: column; font-family: 'Source Sans Pro', sans-serif;">
                         <h1 style="color: #2c3e50; margin-bottom: 1rem;">Access Denied</h1>
-                        <p style="color: #718096;">Invalid password. Please contact the administrator.</p>
+                        <p style="color: #718096;">Invalid password. Please refresh the page to try again.</p>
                     </div>
                 `;
-                throw new Error("Access denied");
             } else {
                 sessionStorage.setItem("hdx_auth", "authorized");
             }
