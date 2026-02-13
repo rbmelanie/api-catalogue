@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="robots" content="noindex, nofollow">
     <title>Humanitarian Core Data API Catalogue</title>
+    <script src="auth.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@400;600;700&display=swap" rel="stylesheet">
@@ -146,6 +147,22 @@
     </footer>
 
     <script>
+        // Simple password protection
+        if (sessionStorage.getItem("hdx_auth") !== "authorized") {
+            const password = prompt("🔒 Enter password to access the catalogue:");
+            if (password !== "humanitarian2026") {
+                document.body.innerHTML = `
+                    <div style="display: flex; align-items: center; justify-content: center; height: 100vh; flex-direction: column; font-family: 'Source Sans Pro', sans-serif;">
+                        <h1 style="color: #2c3e50; margin-bottom: 1rem;">Access Denied</h1>
+                        <p style="color: #718096;">Invalid password. Please contact the administrator.</p>
+                    </div>
+                `;
+                throw new Error("Access denied");
+            } else {
+                sessionStorage.setItem("hdx_auth", "authorized");
+            }
+        }
+
         let allDatasets = [];
         let filteredDatasets = [];
         let currentView = 'table';

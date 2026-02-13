@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="robots" content="noindex, nofollow">
     <title>Domain Definitions - Humanitarian Core Data API Catalogue</title>
+    <script src="auth.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@400;600;700&display=swap" rel="stylesheet">
@@ -33,6 +34,20 @@
             <p>Each domain represents a distinct category of humanitarian data with clearly defined boundaries. These definitions help ensure consistency in how we categorize datasets and clarify what type of information falls within each domain's scope.</p>
         </section>
 
+        <section class="filter-section">
+            <h2>Search Domains</h2>
+            <div class="filters">
+                <div class="filter-group" style="grid-column: 1 / -1;">
+                    <label for="domain-search">Filter by name, definition, or question</label>
+                    <input type="text" id="domain-search" placeholder="Search domains..." oninput="filterDomains()">
+                </div>
+            </div>
+        </section>
+
+        <div class="results-info" id="domains-results-info" style="margin-bottom: 1rem; font-size: 0.9rem; color: var(--text-medium); font-weight: 600;">
+            Loading domains...
+        </div>
+
         <div id="domains-container">
             <div class="loading">
                 <div class="loading-spinner"></div>
@@ -46,12 +61,31 @@
     </footer>
 
     <script>
+        // Simple password protection
+        if (sessionStorage.getItem("hdx_auth") !== "authorized") {
+            const password = prompt("🔒 Enter password to access the catalogue:");
+            if (password !== "humanitarian2026") {
+                document.body.innerHTML = `
+                    <div style="display: flex; align-items: center; justify-content: center; height: 100vh; flex-direction: column; font-family: 'Source Sans Pro', sans-serif;">
+                        <h1 style="color: #2c3e50; margin-bottom: 1rem;">Access Denied</h1>
+                        <p style="color: #718096;">Invalid password. Please contact the administrator.</p>
+                    </div>
+                `;
+                throw new Error("Access denied");
+            } else {
+                sessionStorage.setItem("hdx_auth", "authorized");
+            }
+        }
+
         // Set last updated date
         document.getElementById('update-date').textContent = new Date().toLocaleDateString('en-US', { 
             year: 'numeric', 
             month: 'long', 
             day: 'numeric' 
         });
+
+        let allDomains = [];
+        let filteredDomains = [];
 
         // Domain icons mapping
         const domainIcons = {
@@ -78,8 +112,9 @@
             try {
                 const response = await fetch('domains.csv');
                 const csvText = await response.text();
-                const domains = parseCSV(csvText);
-                renderDomains(domains);
+                allDomains = parseCSV(csvText);
+                filteredDomains = [...allDomains];
+                renderDomains();
             } catch (error) {
                 document.getElementById('domains-container').innerHTML = `
                     <div class="empty-state">
@@ -125,8 +160,44 @@
             return result;
         }
 
-        function renderDomains(domains) {
+        function filterDomains() {
+            const searchText = document.getElementById('domain-search').value.toLowerCase();
+            
+            if (!searchText) {
+                filteredDomains = [...allDomains];
+            } else {
+                filteredDomains = allDomains.filter(domain => {
+                    return domain.Domain.toLowerCase().includes(searchText) ||
+                           domain.Definition.toLowerCase().includes(searchText) ||
+                           domain['Primary Question Answered'].toLowerCase().includes(searchText);
+                });
+            }
+            
+            renderDomains();
+        }
+
+        function renderDomains() {
             const container = document.getElementById('domains-container');
+            const resultsInfo = document.getElementById('domains-results-info');
+            
+            resultsInfo.textContent = `Showing ${filteredDomains.length} of ${allDomains.length} domains`;
+            
+            if (filteredDomains.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <h3>No Domains Found</h3>
+                        <p>Try adjusting your search terms.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = `
+                <div class="domains-grid">
+                    ${filteredDomains.map(domain => createDomainCard(domain)).join('')}
+                </div>
+            `;
+        }
             
             if (domains.length === 0) {
                 container.innerHTML = `
