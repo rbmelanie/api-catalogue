@@ -4,8 +4,8 @@
  */
 
 :root {
-    --hdx-green: rgb(0, 173, 120);
-    --dark-green: rgb(0, 138, 96);
+    --primary-color: rgb(55, 71, 79);
+    --dark-color: rgb(38, 50, 56);
     --text-dark: #2c3e50;
     --text-medium: #4a5568;
     --text-light: #718096;
@@ -30,7 +30,7 @@ body {
 
 /* ===== HEADER ===== */
 .header {
-    background: linear-gradient(135deg, var(--hdx-green) 0%, var(--dark-green) 100%);
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--dark-color) 100%);
     color: var(--white);
     padding: 1.5rem 0;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
@@ -115,7 +115,7 @@ body {
     border-radius: 8px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
     margin-bottom: 1.25rem;
-    border-left: 4px solid var(--hdx-green);
+    border-left: 4px solid var(--primary-color);
 }
 
 .filter-section h2 {
@@ -158,7 +158,7 @@ select, input[type="text"] {
 
 select:focus, input[type="text"]:focus {
     outline: none;
-    border-color: var(--hdx-green);
+    border-color: var(--primary-color);
     box-shadow: 0 0 0 3px rgba(0, 173, 120, 0.1);
 }
 
@@ -184,12 +184,12 @@ select:focus, input[type="text"]:focus {
 }
 
 .multiselect-toggle:hover {
-    border-color: var(--hdx-green);
+    border-color: var(--primary-color);
 }
 
 .multiselect-toggle:focus {
     outline: none;
-    border-color: var(--hdx-green);
+    border-color: var(--primary-color);
     box-shadow: 0 0 0 3px rgba(0, 173, 120, 0.1);
 }
 
@@ -209,7 +209,7 @@ select:focus, input[type="text"]:focus {
     right: 0;
     margin-top: 0.25rem;
     background: var(--white);
-    border: 2px solid var(--hdx-green);
+    border: 2px solid var(--primary-color);
     border-radius: 6px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
     z-index: 1000;
@@ -280,8 +280,8 @@ select:focus, input[type="text"]:focus {
     flex: 1;
     padding: 0.35rem 0.5rem;
     background: var(--white);
-    color: var(--hdx-green);
-    border: 1px solid var(--hdx-green);
+    color: var(--primary-color);
+    border: 1px solid var(--primary-color);
     border-radius: 4px;
     font-size: 0.75rem;
     font-weight: 600;
@@ -290,7 +290,7 @@ select:focus, input[type="text"]:focus {
 }
 
 .multiselect-btn:hover {
-    background: var(--hdx-green);
+    background: var(--primary-color);
     color: var(--white);
 }
 
@@ -313,7 +313,7 @@ select:focus, input[type="text"]:focus {
 }
 
 .select-all-btn {
-    background: var(--hdx-green);
+    background: var(--primary-color);
 }
 
 .reset-btn:hover {
@@ -322,7 +322,7 @@ select:focus, input[type="text"]:focus {
 }
 
 .select-all-btn:hover {
-    background: var(--dark-green);
+    background: var(--dark-color);
     transform: translateY(-1px);
 }
 
@@ -353,9 +353,9 @@ select:focus, input[type="text"]:focus {
 }
 
 .view-btn.active {
-    background: var(--hdx-green);
+    background: var(--primary-color);
     color: var(--white);
-    border-color: var(--hdx-green);
+    border-color: var(--primary-color);
 }
 
 .view-btn.export-btn {
@@ -374,8 +374,8 @@ select:focus, input[type="text"]:focus {
 }
 
 .view-btn:hover:not(.active):not(.export-btn) {
-    border-color: var(--hdx-green);
-    color: var(--hdx-green);
+    border-color: var(--primary-color);
+    color: var(--primary-color);
 }
 
 .results-info {
@@ -387,7 +387,7 @@ select:focus, input[type="text"]:focus {
 /* ===== BADGES ===== */
 .domain-badge, .table-domain-badge {
     display: inline-block;
-    background: linear-gradient(135deg, var(--hdx-green), var(--dark-green));
+    background: linear-gradient(135deg, var(--primary-color), var(--dark-color));
     color: var(--white);
     padding: 0.25rem 0.6rem;
     border-radius: 4px;
@@ -436,7 +436,7 @@ select:focus, input[type="text"]:focus {
 
 .loading-spinner {
     border: 3px solid var(--border-color);
-    border-top: 3px solid var(--hdx-green);
+    border-top: 3px solid var(--primary-color);
     border-radius: 50%;
     width: 40px;
     height: 40px;
@@ -601,13 +601,13 @@ select:focus, input[type="text"]:focus {
 .datasets-table th.sorted-asc::after {
     content: ' ▲';
     opacity: 1;
-    color: var(--hdx-green);
+    color: var(--primary-color);
 }
 
 .datasets-table th.sorted-desc::after {
     content: ' ▼';
     opacity: 1;
-    color: var(--hdx-green);
+    color: var(--primary-color);
 }
 
 .datasets-table td {
@@ -631,7 +631,7 @@ select:focus, input[type="text"]:focus {
 
 /* Expand button */
 .expand-btn {
-    background: var(--hdx-green);
+    background: var(--primary-color);
     color: var(--white);
     border: none;
     width: 24px;
@@ -647,7 +647,7 @@ select:focus, input[type="text"]:focus {
 }
 
 .expand-btn:hover {
-    background: var(--dark-green);
+    background: var(--dark-color);
 }
 
 .expand-btn.expanded::before {
@@ -670,7 +670,7 @@ select:focus, input[type="text"]:focus {
 .expanded-content {
     padding: 1.5rem;
     background: #f0f9f6;
-    border-left: 4px solid var(--hdx-green);
+    border-left: 4px solid var(--primary-color);
 }
 
 .expanded-grid {
@@ -689,7 +689,7 @@ select:focus, input[type="text"]:focus {
     font-size: 0.7rem;
     text-transform: uppercase;
     letter-spacing: 0.05em;
-    color: var(--hdx-green);
+    color: var(--primary-color);
     font-weight: 700;
 }
 
@@ -742,7 +742,7 @@ select:focus, input[type="text"]:focus {
     align-items: center;
     gap: 0.25rem;
     padding: 0.25rem 0.5rem;
-    background: var(--hdx-green);
+    background: var(--primary-color);
     color: var(--white);
     text-decoration: none;
     border-radius: 4px;
@@ -753,18 +753,18 @@ select:focus, input[type="text"]:focus {
 }
 
 .table-link:hover {
-    background: var(--dark-green);
+    background: var(--dark-color);
     transform: translateY(-1px);
 }
 
 .table-link.secondary {
     background: var(--bg-light);
-    color: var(--hdx-green);
-    border: 1px solid var(--hdx-green);
+    color: var(--primary-color);
+    border: 1px solid var(--primary-color);
 }
 
 .table-link.secondary:hover {
-    background: var(--hdx-green);
+    background: var(--primary-color);
     color: var(--white);
 }
 
@@ -787,11 +787,11 @@ select:focus, input[type="text"]:focus {
 .dataset-card:hover {
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.12);
     transform: translateY(-1px);
-    border-left-color: var(--hdx-green);
+    border-left-color: var(--primary-color);
 }
 
 .dataset-card.expanded {
-    border-left-color: var(--hdx-green);
+    border-left-color: var(--primary-color);
 }
 
 .dataset-header {
@@ -828,7 +828,7 @@ select:focus, input[type="text"]:focus {
 
 .expand-toggle {
     margin-top: 0.75rem;
-    color: var(--hdx-green);
+    color: var(--primary-color);
     font-size: 0.85rem;
     font-weight: 700;
     display: flex;
@@ -898,7 +898,7 @@ select:focus, input[type="text"]:focus {
     align-items: center;
     gap: 0.4rem;
     padding: 0.5rem 1rem;
-    background: var(--hdx-green);
+    background: var(--primary-color);
     color: var(--white);
     text-decoration: none;
     border-radius: 6px;
@@ -908,18 +908,18 @@ select:focus, input[type="text"]:focus {
 }
 
 .link-btn:hover {
-    background: var(--dark-green);
+    background: var(--dark-color);
     transform: translateY(-2px);
 }
 
 .link-btn.secondary {
     background: var(--white);
-    color: var(--hdx-green);
-    border: 2px solid var(--hdx-green);
+    color: var(--primary-color);
+    border: 2px solid var(--primary-color);
 }
 
 .link-btn.secondary:hover {
-    background: var(--hdx-green);
+    background: var(--primary-color);
     color: var(--white);
 }
 /* 
@@ -934,7 +934,7 @@ select:focus, input[type="text"]:focus {
     border-radius: 8px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
     margin-bottom: 2rem;
-    border-left: 4px solid var(--hdx-green);
+    border-left: 4px solid var(--primary-color);
 }
 
 .intro-section h2 {
@@ -961,7 +961,7 @@ select:focus, input[type="text"]:focus {
     border-radius: 8px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    border-left: 4px solid var(--hdx-green);
+    border-left: 4px solid var(--primary-color);
 }
 
 .domain-card:hover {
@@ -1002,7 +1002,7 @@ select:focus, input[type="text"]:focus {
     font-size: 0.7rem;
     text-transform: uppercase;
     letter-spacing: 0.05em;
-    color: var(--hdx-green);
+    color: var(--primary-color);
     font-weight: 700;
     margin-bottom: 0.4rem;
 }
@@ -1026,7 +1026,7 @@ select:focus, input[type="text"]:focus {
     background: linear-gradient(135deg, rgba(0, 173, 120, 0.1), rgba(0, 138, 96, 0.1));
     padding: 1rem;
     border-radius: 6px;
-    border-left: 4px solid var(--hdx-green);
+    border-left: 4px solid var(--primary-color);
     font-size: 0.95rem;
     font-weight: 600;
     color: var(--text-dark);
