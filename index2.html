@@ -1,0 +1,1339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow">
+    <title>Humanitarian Core Data API Catalogue (Grid Views)</title>
+    <script src="auth.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header class="header">
+        <div class="header-content">
+            <div class="header-top">
+                <h1>Humanitarian Core Data API Catalogue</h1>
+                <div class="last-updated" id="last-updated">Last updated: <span id="update-date">Loading...</span></div>
+            </div>
+            <p>Browse and discover core humanitarian datasets with comprehensive metadata, API access, and technical documentation.</p>
+            <nav class="header-nav">
+                <a href="index.html">Catalogue</a>
+                <a href="domains.html">Domain Definitions</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="container">
+        <section class="filter-section">
+            <h2>Filter Datasets</h2>
+            <div class="filters">
+                <div class="filter-group">
+                    <label for="domain-filter">Domain</label>
+                    <select id="domain-filter">
+                        <option value="">All Domains</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label for="org-filter">Organization</label>
+                    <select id="org-filter">
+                        <option value="">All Organizations</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label for="country-filter">Countries</label>
+                    <select id="country-filter">
+                        <option value="">All Countries</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label for="freq-filter">Publication Frequency</label>
+                    <select id="freq-filter">
+                        <option value="">All Frequencies</option>
+                        <option value="Daily">Daily</option>
+                        <option value="Weekly">Weekly</option>
+                        <option value="Monthly">Monthly</option>
+                        <option value="Bi-monthly">Bi-monthly</option>
+                        <option value="Quarterly">Quarterly</option>
+                        <option value="Annually">Annually</option>
+                    </select>
+                </div>
+                <div class="filter-group" id="dimensions-filter-group" style="display: none;">
+                    <label for="dimensions-filter">Dimensions</label>
+                    <select id="dimensions-filter">
+                        <option value="">All Dimensions</option>
+                    </select>
+                    <div class="filter-hint">Tags like "real-time", "validated"</div>
+                </div>
+                <div class="filter-group">
+                    <label for="search-filter">Search</label>
+                    <input type="text" id="search-filter" placeholder="Search datasets...">
+                </div>
+                <div class="filter-group">
+                    <label for="dataset-select-toggle">Select Datasets</label>
+                    <div class="custom-multiselect">
+                        <button type="button" class="multiselect-toggle" id="dataset-select-toggle" onclick="toggleDatasetDropdown()">
+                            <span id="dataset-select-label">All datasets</span>
+                            <span class="dropdown-arrow">▼</span>
+                        </button>
+                        <div class="multiselect-dropdown" id="dataset-dropdown" style="display: none;">
+                            <div class="multiselect-search">
+                                <input type="text" id="dataset-search" placeholder="Search datasets..." onkeyup="filterDatasetOptions()">
+                            </div>
+                            <div class="multiselect-options" id="dataset-options">
+                                <!-- Populated dynamically -->
+                            </div>
+                            <div class="multiselect-actions">
+                                <button type="button" onclick="selectAllDatasetsCheckbox()" class="multiselect-btn">Select All</button>
+                                <button type="button" onclick="clearAllDatasetsCheckbox()" class="multiselect-btn">Clear All</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="filter-actions">
+                <button class="reset-btn" onclick="resetFilters()">Reset All Filters</button>
+                <button class="select-all-btn" onclick="selectAllDatasets()">Select All Datasets</button>
+            </div>
+        </section>
+
+        <div class="view-toggle">
+            <div class="results-info" id="results-info">
+                Loading datasets...
+            </div>
+            <div class="view-buttons">
+                <button class="view-btn active" onclick="switchView('table')" id="table-btn">📊 Table</button>
+                <button class="view-btn" onclick="switchView('cards')" id="cards-btn">📋 Cards</button>
+                <button class="view-btn" onclick="switchView('grid')" id="grid-btn">🔲 Grid</button>
+                <button class="view-btn" onclick="switchView('hdxgrid')" id="hdxgrid-btn">📦 HDX Grid</button>
+                <button class="view-btn" onclick="switchView('crosssector')" id="crosssector-btn">🔀 Cross-Sector</button>
+                <button class="view-btn export-btn" onclick="exportToCSV()">⬇️ Export CSV</button>
+                <button class="view-btn export-btn" onclick="exportToExcel()">⬇️ Export Excel</button>
+            </div>
+        </div>
+
+        <div id="datasets-container">
+            <div class="loading">
+                <div class="loading-spinner"></div>
+                <p>Loading datasets...</p>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="footer-content">
+        </div>
+    </footer>
+
+    <script>
+        // Password protection and initialization
+        window.addEventListener('DOMContentLoaded', function() {
+            // Simple password protection
+            if (sessionStorage.getItem("hdx_auth") !== "authorized") {
+                const password = prompt("🔒 Enter password to access the catalogue:");
+                if (!password || password !== "humanitarian2026") {
+                    document.body.innerHTML = `
+                        <div style="display: flex; align-items: center; justify-content: center; height: 100vh; flex-direction: column; font-family: 'Source Sans Pro', sans-serif;">
+                            <h1 style="color: #2c3e50; margin-bottom: 1rem;">Access Denied</h1>
+                            <p style="color: #718096;">Invalid password. Please refresh the page to try again.</p>
+                        </div>
+                    `;
+                    return; // Stop everything
+                } else {
+                    sessionStorage.setItem("hdx_auth", "authorized");
+                }
+            }
+
+            // Set last updated date
+            const dateElement = document.getElementById('update-date');
+            if (dateElement) {
+                dateElement.textContent = new Date().toLocaleDateString('en-US', { 
+                    year: 'numeric', 
+                    month: 'long', 
+                    day: 'numeric' 
+                });
+            }
+
+            // Load datasets
+            loadDatasets();
+
+            // Event listeners
+            document.getElementById('domain-filter').addEventListener('change', applyFilters);
+            document.getElementById('org-filter').addEventListener('change', applyFilters);
+            document.getElementById('search-filter').addEventListener('input', applyFilters);
+            document.getElementById('country-filter').addEventListener('change', applyFilters);
+            document.getElementById('freq-filter').addEventListener('change', applyFilters);
+            document.getElementById('dimensions-filter').addEventListener('change', applyFilters);
+        });
+
+        let allDatasets = [];
+        let filteredDatasets = [];
+        let currentView = 'table';
+        let sortColumn = null;
+        let sortDirection = 'asc';
+        let selectedDatasetNames = [];
+
+        // Load and parse CSV
+        async function loadDatasets() {
+            try {
+                const response = await fetch('datasets.csv');
+                const csvText = await response.text();
+                allDatasets = parseCSV(csvText);
+                filteredDatasets = [...allDatasets];
+                
+                populateFilters();
+                renderDatasets();
+            } catch (error) {
+                document.getElementById('datasets-container').innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">⚠️</div>
+                        <h3>Error Loading Datasets</h3>
+                        <p>Unable to load datasets.csv. Please check the file exists and is properly formatted.</p>
+                    </div>
+                `;
+                console.error('Error loading datasets:', error);
+            }
+        }
+
+        // Simple CSV parser
+        function parseCSV(text) {
+            const lines = text.trim().split('\n');
+            const headers = lines[0].split(',').map(h => h.trim());
+            
+            return lines.slice(1).map(line => {
+                const values = parseCSVLine(line);
+                const dataset = {};
+                headers.forEach((header, index) => {
+                    dataset[header] = values[index] ? values[index].trim() : '';
+                });
+                return dataset;
+            }).filter(d => d['Dataset Name']);
+        }
+
+        // Handle CSV with commas in quoted fields
+        function parseCSVLine(line) {
+            const result = [];
+            let current = '';
+            let inQuotes = false;
+            
+            for (let i = 0; i < line.length; i++) {
+                const char = line[i];
+                if (char === '"') {
+                    inQuotes = !inQuotes;
+                } else if (char === ',' && !inQuotes) {
+                    result.push(current);
+                    current = '';
+                } else {
+                    current += char;
+                }
+            }
+            result.push(current);
+            return result;
+        }
+
+        // Populate filter dropdowns
+        function populateFilters() {
+            // Domains
+            const domains = [...new Set(allDatasets.map(d => d.Domain).filter(Boolean))].sort();
+            const domainSelect = document.getElementById('domain-filter');
+            domains.forEach(domain => {
+                const option = document.createElement('option');
+                option.value = domain;
+                option.textContent = domain;
+                domainSelect.appendChild(option);
+            });
+
+            // Organizations
+            const orgs = [...new Set(allDatasets.map(d => d['Organization']).filter(Boolean))].sort();
+            const orgSelect = document.getElementById('org-filter');
+            orgs.forEach(org => {
+                const option = document.createElement('option');
+                option.value = org;
+                option.textContent = org;
+                orgSelect.appendChild(option);
+            });
+
+            // Countries
+            const countries = [...new Set(allDatasets.map(d => d.Countries).filter(Boolean))].sort();
+            const countrySelect = document.getElementById('country-filter');
+            countries.forEach(country => {
+                const option = document.createElement('option');
+                option.value = country;
+                option.textContent = country;
+                countrySelect.appendChild(option);
+            });
+
+            // Dimensions (tags) - auto-enables if data is present
+            const allDimensions = [...new Set(allDatasets.flatMap(d => 
+                d.Dimensions ? d.Dimensions.split(';').map(dim => dim.trim()) : []
+            ))].filter(Boolean).sort();
+            
+            if (allDimensions.length > 0) {
+                const dimensionsSelect = document.getElementById('dimensions-filter');
+                const dimensionsGroup = document.getElementById('dimensions-filter-group');
+                
+                allDimensions.forEach(dim => {
+                    const option = document.createElement('option');
+                    option.value = dim;
+                    option.textContent = dim;
+                    dimensionsSelect.appendChild(option);
+                });
+                
+                // Show the filter
+                dimensionsGroup.style.display = 'flex';
+            }
+
+            // Dataset checkbox dropdown
+            const datasetOptions = document.getElementById('dataset-options');
+            allDatasets.forEach((dataset, index) => {
+                const option = document.createElement('div');
+                option.className = 'multiselect-option';
+                option.innerHTML = `
+                    <input type="checkbox" id="dataset-${index}" value="${dataset['Dataset Name']}" onchange="updateDatasetSelection()">
+                    <label for="dataset-${index}">${dataset['Dataset Name']} (${dataset['Organization']})</label>
+                `;
+                datasetOptions.appendChild(option);
+            });
+        }
+
+        // Toggle dataset dropdown
+        function toggleDatasetDropdown() {
+            const dropdown = document.getElementById('dataset-dropdown');
+            const toggle = document.getElementById('dataset-select-toggle');
+            
+            if (dropdown.style.display === 'none') {
+                dropdown.style.display = 'flex';
+                toggle.classList.add('active');
+                // Close when clicking outside
+                setTimeout(() => {
+                    document.addEventListener('click', closeDropdownOnClickOutside);
+                }, 0);
+            } else {
+                dropdown.style.display = 'none';
+                toggle.classList.remove('active');
+                document.removeEventListener('click', closeDropdownOnClickOutside);
+            }
+        }
+
+        function closeDropdownOnClickOutside(event) {
+            const dropdown = document.getElementById('dataset-dropdown');
+            const toggle = document.getElementById('dataset-select-toggle');
+            const container = dropdown.parentElement;
+            
+            if (!container.contains(event.target)) {
+                dropdown.style.display = 'none';
+                toggle.classList.remove('active');
+                document.removeEventListener('click', closeDropdownOnClickOutside);
+            }
+        }
+
+        // Filter dataset options in dropdown
+        function filterDatasetOptions() {
+            const search = document.getElementById('dataset-search').value.toLowerCase();
+            const options = document.querySelectorAll('.multiselect-option');
+            
+            options.forEach(option => {
+                const text = option.textContent.toLowerCase();
+                option.style.display = text.includes(search) ? 'flex' : 'none';
+            });
+        }
+
+        // Select all datasets checkbox
+        function selectAllDatasetsCheckbox() {
+            const checkboxes = document.querySelectorAll('#dataset-options input[type="checkbox"]');
+            const visibleCheckboxes = Array.from(checkboxes).filter(cb => cb.parentElement.style.display !== 'none');
+            visibleCheckboxes.forEach(cb => cb.checked = true);
+            updateDatasetSelection();
+        }
+
+        // Clear all datasets checkbox
+        function clearAllDatasetsCheckbox() {
+            const checkboxes = document.querySelectorAll('#dataset-options input[type="checkbox"]');
+            checkboxes.forEach(cb => cb.checked = false);
+            updateDatasetSelection();
+        }
+
+        // Update dataset selection and label
+        function updateDatasetSelection() {
+            const checkboxes = document.querySelectorAll('#dataset-options input[type="checkbox"]:checked');
+            selectedDatasetNames = Array.from(checkboxes).map(cb => cb.value);
+            
+            const label = document.getElementById('dataset-select-label');
+            if (selectedDatasetNames.length === 0) {
+                label.textContent = 'All datasets';
+            } else if (selectedDatasetNames.length === 1) {
+                label.textContent = '1 dataset selected';
+            } else {
+                label.textContent = `${selectedDatasetNames.length} datasets selected`;
+            }
+            
+            applyFilters();
+        }
+
+        // Select all datasets (original button)
+        function selectAllDatasets() {
+            selectAllDatasetsCheckbox();
+        }
+
+        // Apply filters
+        function applyFilters() {
+            const domainFilter = document.getElementById('domain-filter').value.toLowerCase();
+            const orgFilter = document.getElementById('org-filter').value.toLowerCase();
+            const searchFilter = document.getElementById('search-filter').value.toLowerCase();
+            const countryFilter = document.getElementById('country-filter').value.toLowerCase();
+            const freqFilter = document.getElementById('freq-filter').value.toLowerCase();
+            const dimensionsFilter = document.getElementById('dimensions-filter').value.toLowerCase();
+
+            filteredDatasets = allDatasets.filter(dataset => {
+                const matchesDomain = !domainFilter || dataset.Domain.toLowerCase() === domainFilter;
+                const matchesOrg = !orgFilter || dataset['Organization'].toLowerCase() === orgFilter;
+                const matchesSearch = !searchFilter || 
+                    dataset['Dataset Name'].toLowerCase().includes(searchFilter) ||
+                    dataset['Organization'].toLowerCase().includes(searchFilter) ||
+                    dataset.Description.toLowerCase().includes(searchFilter);
+                const matchesCountry = !countryFilter || dataset.Countries.toLowerCase() === countryFilter;
+                const matchesFreq = !freqFilter || dataset['Data Publication frequency'].toLowerCase() === freqFilter;
+                const matchesDimensions = !dimensionsFilter || 
+                    (dataset.Dimensions && dataset.Dimensions.toLowerCase().includes(dimensionsFilter));
+                const matchesDatasetSelection = selectedDatasetNames.length === 0 || selectedDatasetNames.includes(dataset['Dataset Name']);
+
+                return matchesDomain && matchesOrg && matchesSearch && matchesCountry && matchesFreq && matchesDimensions && matchesDatasetSelection;
+            });
+
+            renderDatasets();
+        }
+
+        // Reset filters
+        function resetFilters() {
+            document.getElementById('domain-filter').value = '';
+            document.getElementById('org-filter').value = '';
+            document.getElementById('search-filter').value = '';
+            document.getElementById('country-filter').value = '';
+            document.getElementById('freq-filter').value = '';
+            document.getElementById('dimensions-filter').value = '';
+            
+            // Clear dataset checkboxes
+            const checkboxes = document.querySelectorAll('#dataset-options input[type="checkbox"]');
+            checkboxes.forEach(cb => cb.checked = false);
+            selectedDatasetNames = [];
+            document.getElementById('dataset-select-label').textContent = 'All datasets';
+            
+            sortColumn = null;
+            sortDirection = 'asc';
+            applyFilters();
+        }
+
+        // Switch view
+        function switchView(view) {
+            currentView = view;
+            document.getElementById('cards-btn').classList.toggle('active', view === 'cards');
+            document.getElementById('table-btn').classList.toggle('active', view === 'table');
+            document.getElementById('grid-btn').classList.toggle('active', view === 'grid');
+            document.getElementById('hdxgrid-btn').classList.toggle('active', view === 'hdxgrid');
+            document.getElementById('crosssector-btn').classList.toggle('active', view === 'crosssector');
+            renderDatasets();
+        }
+
+        // Sort table
+        function sortTable(column) {
+            if (sortColumn === column) {
+                sortDirection = sortDirection === 'asc' ? 'desc' : 'asc';
+            } else {
+                sortColumn = column;
+                sortDirection = 'asc';
+            }
+
+            filteredDatasets.sort((a, b) => {
+                let valA = a[column] || '';
+                let valB = b[column] || '';
+                
+                const numA = parseFloat(valA);
+                const numB = parseFloat(valB);
+                if (!isNaN(numA) && !isNaN(numB)) {
+                    return sortDirection === 'asc' ? numA - numB : numB - numA;
+                }
+                
+                valA = valA.toString().toLowerCase();
+                valB = valB.toString().toLowerCase();
+                
+                if (sortDirection === 'asc') {
+                    return valA.localeCompare(valB);
+                } else {
+                    return valB.localeCompare(valA);
+                }
+            });
+
+            renderDatasets();
+        }
+
+        // Toggle row expansion
+        function toggleRow(index) {
+            const expandedRow = document.getElementById(`expanded-${index}`);
+            const expandBtn = document.getElementById(`expand-btn-${index}`);
+            const mainRow = expandBtn.closest('tr');
+            
+            if (expandedRow.classList.contains('show')) {
+                expandedRow.classList.remove('show');
+                expandBtn.classList.remove('expanded');
+                mainRow.classList.remove('expanded');
+            } else {
+                expandedRow.classList.add('show');
+                expandBtn.classList.add('expanded');
+                mainRow.classList.add('expanded');
+            }
+        }
+
+        // Toggle card expansion
+        function toggleCard(index) {
+            const card = document.querySelector(`[data-index="${index}"]`);
+            if (card) {
+                card.classList.toggle('expanded');
+            }
+        }
+
+        // Create Grid View (organized by domain function)
+        function createGridView() {
+            // Group datasets by domain
+            const domainGroups = {};
+            filteredDatasets.forEach(dataset => {
+                const domain = dataset.Domain || 'Uncategorized';
+                if (!domainGroups[domain]) {
+                    domainGroups[domain] = [];
+                }
+                domainGroups[domain].push(dataset);
+            });
+
+            // Organize domains into functional categories based on actual domain names
+            const categories = {
+                'WHERE? (Spatial & Geographic)': [
+                    'Location', 
+                    'Geographic', 
+                    'Infrastructure', 
+                    'Shelter',
+                    'Reference Data'  // Geographic reference data
+                ],
+                'WHO? (People & Populations)': [
+                    'Population',
+                    'Protection & Legal'
+                ],
+                'WHAT? (Operations & Response)': [
+                    'Funding',
+                    'Services',
+                    'Coordination',
+                    'Emergencies & Situation Definitions'
+                ],
+                'WHY? (Context & Needs)': [
+                    'Humanitarian Needs',
+                    'Needs Assessment',
+                    'Situation Analysis'
+                ],
+                'ENVIRONMENT & RISK': [
+                    'Risk Management',
+                    'Hazardous events',
+                    'Food Security'
+                ]
+            };
+
+            let gridHTML = '<div class="grid-view">';
+
+            Object.entries(categories).forEach(([categoryName, domains]) => {
+                const categoryDatasets = domains.flatMap(d => domainGroups[d] || []);
+                const count = categoryDatasets.length;
+
+                gridHTML += `
+                    <div class="grid-category">
+                        <div class="grid-category-header">
+                            <h3>${categoryName}</h3>
+                            <span class="grid-count">${count} dataset${count !== 1 ? 's' : ''}</span>
+                        </div>
+                        <div class="grid-tiles">
+                `;
+
+                domains.forEach(domain => {
+                    const datasets = domainGroups[domain] || [];
+                    const orgs = [...new Set(datasets.map(d => d.Organization))].slice(0, 3).join(', ');
+                    
+                    gridHTML += `
+                        <div class="grid-tile ${datasets.length > 0 ? 'has-data' : 'no-data'}" onclick="filterByDomain('${domain}')">
+                            <div class="grid-tile-name">${domain}</div>
+                            <div class="grid-tile-count">${datasets.length} dataset${datasets.length !== 1 ? 's' : ''}</div>
+                            ${datasets.length > 0 ? `<div class="grid-tile-orgs">${orgs}</div>` : ''}
+                        </div>
+                    `;
+                });
+
+                gridHTML += `
+                        </div>
+                    </div>
+                `;
+            });
+
+            // Add "Other Domains" section for domains not in categories
+            const categorizedDomains = Object.values(categories).flat();
+            const otherDomains = Object.keys(domainGroups).filter(d => !categorizedDomains.includes(d));
+            
+            if (otherDomains.length > 0) {
+                const otherCount = otherDomains.reduce((sum, d) => sum + domainGroups[d].length, 0);
+                
+                gridHTML += `
+                    <div class="grid-category">
+                        <div class="grid-category-header">
+                            <h3>OTHER DOMAINS</h3>
+                            <span class="grid-count">${otherCount} dataset${otherCount !== 1 ? 's' : ''}</span>
+                        </div>
+                        <div class="grid-tiles">
+                `;
+
+                otherDomains.forEach(domain => {
+                    const datasets = domainGroups[domain];
+                    const orgs = [...new Set(datasets.map(d => d.Organization))].slice(0, 3).join(', ');
+                    
+                    gridHTML += `
+                        <div class="grid-tile has-data" onclick="filterByDomain('${domain}')">
+                            <div class="grid-tile-name">${domain}</div>
+                            <div class="grid-tile-count">${datasets.length} dataset${datasets.length !== 1 ? 's' : ''}</div>
+                            <div class="grid-tile-orgs">${orgs}</div>
+                        </div>
+                    `;
+                });
+
+                gridHTML += `
+                        </div>
+                    </div>
+                `;
+            }
+
+            gridHTML += `
+                <div class="grid-note">
+                    <strong>💡 Tip:</strong> Click any tile to filter datasets by that domain
+                </div>
+            </div>`;
+
+            return gridHTML;
+        }
+
+        // Helper function to filter by domain when clicking grid tile
+        function filterByDomain(domain) {
+            document.getElementById('domain-filter').value = domain;
+            switchView('table');
+            applyFilters();
+        }
+
+        // Create HDX Data Grid View (actual HDX categories)
+        function createHDXGridView() {
+            // Map your domains to HDX Data Grid categories
+            // NOTE: This should eventually come from datasets.csv with HDX_Category and HDX_Subcategory columns
+            const hdxCategories = {
+                '👥 Affected People': {
+                    description: 'Population movements, casualties, and people affected',
+                    subcategories: {
+                        'Population': 'IDPs, refugees, returnees, affected population (merged: Population Domain + Population)',
+                        'Protection & Legal': 'Protection concerns, casualties, legal issues',
+                        'Humanitarian Needs': 'People in need, needs assessments (merged: Humanitarian Needs + Needs Assessment)'
+                    }
+                },
+                '🤝 Coordination & Context': {
+                    description: 'Who is doing what where, appeals, and situation context',
+                    subcategories: {
+                        'Operational Presence': '3W/4W/5W, service mapping (includes Services + Services and Delivery)',
+                        'Funding': 'Financial tracking, coordinated appeals (merged: Appeals + Funding + Funding/Donations)',
+                        'Emergencies & Situation Definitions': 'Crisis definitions, activation levels',
+                        'Situation Analysis': 'Situation reports and contextual analysis'
+                    }
+                },
+                '🌾 Food Security & Nutrition': {
+                    description: 'Food security indicators, nutrition, market monitoring',
+                    subcategories: {
+                        'Food Security': 'FCS, CSI, food prices, market assessments (NOT IPC yet)',
+                        'Nutrition': 'Malnutrition rates, nutrition surveys'
+                    }
+                },
+                '📍 Geography & Infrastructure': {
+                    description: 'Administrative boundaries, places, and physical infrastructure',
+                    subcategories: {
+                        'Location': 'Admin boundaries, P-codes, place names',
+                        'Geographic': 'Geographic reference data, CODs, FODs',
+                        'Reference Data': 'Common operational/fundamental datasets',
+                        'Infrastructure': 'Facilities, roads, utilities',
+                        'Shelter': 'Shelter facilities, camps, settlements'
+                    }
+                },
+                '🏥 Health & Education': {
+                    description: 'Health and education facilities and services',
+                    subcategories: {
+                        'Healthcare & Education': 'Health and education facilities (NOTE: contradicts domain philosophy!)'
+                    }
+                },
+                '🌍 Climate & Environment': {
+                    description: 'Natural hazards, climate impacts, environmental risks',
+                    subcategories: {
+                        'Risk Management': 'Earth observation, remote sensing, early warning',
+                        'Hazardous events': 'Global Child Hazard Database, hazard data, climate data (CHIRPS)'
+                    }
+                }
+            };
+
+            // For merging domains - map old domain names to merged names
+            const domainMergeMap = {
+                'Population Domain': 'Population',
+                'Needs Assessment': 'Humanitarian Needs',
+                'Appeals': 'Funding',
+                'Funding / Donations': 'Funding',
+                'Services': 'Operational Presence',
+                'Services and Delivery': 'Operational Presence'
+            };
+
+            // Group datasets by domain (with merging for HDX Grid)
+            const domainGroups = {};
+            filteredDatasets.forEach(dataset => {
+                let domain = dataset.Domain || 'Uncategorized';
+                // Apply merge mapping
+                domain = domainMergeMap[domain] || domain;
+                
+                if (!domainGroups[domain]) {
+                    domainGroups[domain] = [];
+                }
+                domainGroups[domain].push(dataset);
+            });
+
+            let gridHTML = `
+                <div class="hdx-grid-view">
+                    <div class="hdx-grid-intro">
+                        <h3>📦 HDX Data Grid Structure</h3>
+                        <p>This view organizes datasets using the <strong>HDX Data Grid framework</strong> - 6 main categories used across humanitarian crises. Compare this to our domain-based approach.</p>
+                    </div>
+            `;
+
+            Object.entries(hdxCategories).forEach(([categoryName, categoryInfo]) => {
+                // Count datasets in this category
+                let categoryDatasets = [];
+                Object.entries(categoryInfo.subcategories).forEach(([domain, desc]) => {
+                    if (domainGroups[domain]) {
+                        categoryDatasets = categoryDatasets.concat(domainGroups[domain]);
+                    }
+                });
+
+                gridHTML += `
+                    <div class="hdx-category">
+                        <div class="hdx-category-header">
+                            <div>
+                                <h3>${categoryName}</h3>
+                                <p class="hdx-category-desc">${categoryInfo.description}</p>
+                            </div>
+                            <span class="hdx-category-count">${categoryDatasets.length} dataset${categoryDatasets.length !== 1 ? 's' : ''}</span>
+                        </div>
+                        <div class="hdx-subcategories">
+                `;
+
+                Object.entries(categoryInfo.subcategories).forEach(([domain, description]) => {
+                    const datasets = domainGroups[domain] || [];
+                    const orgs = [...new Set(datasets.map(d => d.Organization))].slice(0, 3).join(', ');
+                    const hasData = datasets.length > 0;
+
+                    gridHTML += `
+                        <div class="hdx-subcategory ${hasData ? 'has-data' : 'no-data'}" ${hasData ? `onclick="filterByDomain('${domain}')"` : ''}>
+                            <div class="hdx-subcategory-header">
+                                <div class="hdx-subcategory-name">${domain}</div>
+                                <div class="hdx-subcategory-count ${hasData ? 'has-count' : 'no-count'}">
+                                    ${datasets.length > 0 ? `${datasets.length} dataset${datasets.length !== 1 ? 's' : ''}` : 'No data'}
+                                </div>
+                            </div>
+                            <div class="hdx-subcategory-desc">${description}</div>
+                            ${hasData ? `<div class="hdx-subcategory-orgs">${orgs}</div>` : ''}
+                        </div>
+                    `;
+                });
+
+                gridHTML += `
+                        </div>
+                    </div>
+                `;
+            });
+
+            // Show domains that don't fit HDX categories
+            const hdxMappedDomains = Object.values(hdxCategories).flatMap(cat => Object.keys(cat.subcategories));
+            const unmappedDomains = Object.keys(domainGroups).filter(d => !hdxMappedDomains.includes(d) && d !== 'Uncategorized');
+            
+            if (unmappedDomains.length > 0) {
+                const unmappedCount = unmappedDomains.reduce((sum, d) => sum + domainGroups[d].length, 0);
+                
+                gridHTML += `
+                    <div class="hdx-unmapped">
+                        <div class="hdx-unmapped-header">
+                            <h4>⚠️ Domains Not in HDX Grid Framework</h4>
+                            <span class="hdx-unmapped-count">${unmappedCount} dataset${unmappedCount !== 1 ? 's' : ''}</span>
+                        </div>
+                        <p class="hdx-unmapped-note">These domains exist in your catalogue but don't map to standard HDX Data Grid categories:</p>
+                        <div class="hdx-unmapped-list">
+                `;
+
+                unmappedDomains.forEach(domain => {
+                    const datasets = domainGroups[domain];
+                    gridHTML += `
+                        <div class="hdx-unmapped-item" onclick="filterByDomain('${domain}')">
+                            <strong>${domain}</strong> (${datasets.length} dataset${datasets.length !== 1 ? 's' : ''})
+                        </div>
+                    `;
+                });
+
+                gridHTML += `
+                        </div>
+                    </div>
+                `;
+            }
+
+            gridHTML += `
+                </div>
+            `;
+
+            return gridHTML;
+        }
+
+        // Create Cross-Sector Explorer View
+        function createCrossSectorView() {
+            // Define sectors and their relevant domains
+            const sectors = {
+                'Health': {
+                    icon: '🏥',
+                    domains: {
+                        'Location': 'Where are health facilities?',
+                        'Population Domain': 'Who needs health services? (vulnerable populations)',
+                        'Infrastructure': 'What is health facility capacity?',
+                        'Humanitarian Needs': 'What is the health situation and disease burden?',
+                        'Services': 'What health services are being delivered?',
+                        'Protection & Legal': 'Are health facilities/workers being attacked?'
+                    }
+                },
+                'Education': {
+                    icon: '📚',
+                    domains: {
+                        'Location': 'Where are schools and education facilities?',
+                        'Population Domain': 'Who are the school-age children?',
+                        'Infrastructure': 'What is school facility condition?',
+                        'Humanitarian Needs': 'What are current education needs and barriers?',
+                        'Services': 'What education services are being provided?',
+                        'Protection & Legal': 'Are schools safe from attacks?'
+                    }
+                },
+                'Food Security': {
+                    icon: '🌾',
+                    domains: {
+                        'Location': 'Where are markets and food distribution points?',
+                        'Population Domain': 'Who is food insecure?',
+                        'Infrastructure': 'What is market and supply chain status?',
+                        'Humanitarian Needs': 'What is the food security situation?',
+                        'Services': 'What food assistance is being provided?',
+                        'Coordination': 'How is food response coordinated?'
+                    }
+                }
+            };
+
+            let html = `
+                <div class="cross-sector-view">
+                    <div class="cross-sector-intro">
+                        <h3>Cross-Sector Data Explorer</h3>
+                        <p>This view demonstrates how our domain-based approach provides <strong>comprehensive data for any sector</strong> without creating sector-specific silos. Select a sector to see which domains provide relevant data.</p>
+                    </div>
+
+                    <div class="sector-selector">
+                        <label for="sector-select"><strong>Select a sector:</strong></label>
+                        <select id="sector-select" onchange="updateCrossSectorView(this.value)">
+                            <option value="Health">🏥 Health</option>
+                            <option value="Education">📚 Education</option>
+                            <option value="Food Security">🌾 Food Security</option>
+                        </select>
+                    </div>
+
+                    <div id="sector-content">
+            `;
+
+            // Show Health by default
+            const sectorName = 'Health';
+            const sector = sectors[sectorName];
+            
+            html += `
+                <div class="sector-display">
+                    <div class="sector-header">
+                        <span class="sector-icon">${sector.icon}</span>
+                        <h3>${sectorName} Response</h3>
+                    </div>
+                    <p class="sector-description">For a comprehensive ${sectorName.toLowerCase()} response, you need data from multiple cross-cutting domains:</p>
+
+                    <div class="domain-list">
+            `;
+
+            Object.entries(sector.domains).forEach(([domain, question]) => {
+                const datasets = filteredDatasets.filter(d => d.Domain === domain);
+                const count = datasets.length;
+                const orgs = [...new Set(datasets.map(d => d.Organization))].join(', ') || 'No datasets yet';
+
+                html += `
+                    <div class="domain-row ${count > 0 ? 'has-datasets' : 'no-datasets'}">
+                        <div class="domain-row-header">
+                            <span class="domain-row-name">${domain}</span>
+                            <span class="domain-row-count">${count} dataset${count !== 1 ? 's' : ''}</span>
+                        </div>
+                        <div class="domain-row-question">${question}</div>
+                        ${count > 0 ? `
+                            <div class="domain-row-orgs">
+                                <strong>Organizations:</strong> ${orgs}
+                            </div>
+                            <button class="domain-row-view" onclick="filterByDomain('${domain}')">View datasets →</button>
+                        ` : `<div class="domain-row-empty">No datasets available yet for this domain</div>`}
+                    </div>
+                `;
+            });
+
+            const totalCount = Object.keys(sector.domains).reduce((sum, domain) => {
+                return sum + filteredDatasets.filter(d => d.Domain === domain).length;
+            }, 0);
+
+            const domainCount = Object.keys(sector.domains).length;
+
+            html += `
+                    </div>
+
+                    <div class="sector-summary">
+                        <h4>📊 Complete Picture</h4>
+                        <p>For ${sectorName.toLowerCase()} response, we have <strong>${totalCount} datasets</strong> across <strong>${domainCount} domains</strong>, providing comprehensive situational awareness without sector silos.</p>
+                        <p class="sector-benefit">✅ <strong>Benefit:</strong> This cross-cutting approach means the same data structure works for ANY humanitarian sector, promoting interoperability and reusability.</p>
+                    </div>
+                </div>
+            `;
+
+            html += `
+                    </div>
+                </div>
+            `;
+
+            return html;
+        }
+
+        // Update cross-sector view when selector changes
+        function updateCrossSectorView(sectorName) {
+            const sectors = {
+                'Health': {
+                    icon: '🏥',
+                    domains: {
+                        'Location': 'Where are health facilities?',
+                        'Population Domain': 'Who needs health services? (vulnerable populations)',
+                        'Infrastructure': 'What is health facility capacity?',
+                        'Humanitarian Needs': 'What is the health situation and disease burden?',
+                        'Services': 'What health services are being delivered?',
+                        'Protection & Legal': 'Are health facilities/workers being attacked?'
+                    }
+                },
+                'Education': {
+                    icon: '📚',
+                    domains: {
+                        'Location': 'Where are schools and education facilities?',
+                        'Population Domain': 'Who are the school-age children?',
+                        'Infrastructure': 'What is school facility condition?',
+                        'Humanitarian Needs': 'What are current education needs and barriers?',
+                        'Services': 'What education services are being provided?',
+                        'Protection & Legal': 'Are schools safe from attacks?'
+                    }
+                },
+                'Food Security': {
+                    icon: '🌾',
+                    domains: {
+                        'Location': 'Where are markets and food distribution points?',
+                        'Population Domain': 'Who is food insecure?',
+                        'Infrastructure': 'What is market and supply chain status?',
+                        'Humanitarian Needs': 'What is the food security situation?',
+                        'Services': 'What food assistance is being provided?',
+                        'Coordination': 'How is food response coordinated?'
+                    }
+                }
+            };
+
+            const sector = sectors[sectorName];
+            if (!sector) return;
+
+            let html = `
+                <div class="sector-display">
+                    <div class="sector-header">
+                        <span class="sector-icon">${sector.icon}</span>
+                        <h3>${sectorName} Response</h3>
+                    </div>
+                    <p class="sector-description">For a comprehensive ${sectorName.toLowerCase()} response, you need data from multiple cross-cutting domains:</p>
+
+                    <div class="domain-list">
+            `;
+
+            Object.entries(sector.domains).forEach(([domain, question]) => {
+                const datasets = filteredDatasets.filter(d => d.Domain === domain);
+                const count = datasets.length;
+                const orgs = [...new Set(datasets.map(d => d.Organization))].join(', ') || 'No datasets yet';
+
+                html += `
+                    <div class="domain-row ${count > 0 ? 'has-datasets' : 'no-datasets'}">
+                        <div class="domain-row-header">
+                            <span class="domain-row-name">${domain}</span>
+                            <span class="domain-row-count">${count} dataset${count !== 1 ? 's' : ''}</span>
+                        </div>
+                        <div class="domain-row-question">${question}</div>
+                        ${count > 0 ? `
+                            <div class="domain-row-orgs">
+                                <strong>Organizations:</strong> ${orgs}
+                            </div>
+                            <button class="domain-row-view" onclick="filterByDomain('${domain}')">View datasets →</button>
+                        ` : `<div class="domain-row-empty">No datasets available yet for this domain</div>`}
+                    </div>
+                `;
+            });
+
+            const totalCount = Object.keys(sector.domains).reduce((sum, domain) => {
+                return sum + filteredDatasets.filter(d => d.Domain === domain).length;
+            }, 0);
+
+            const domainCount = Object.keys(sector.domains).length;
+
+            html += `
+                    </div>
+
+                    <div class="sector-summary">
+                        <h4>📊 Complete Picture</h4>
+                        <p>For ${sectorName.toLowerCase()} response, we have <strong>${totalCount} datasets</strong> across <strong>${domainCount} domains</strong>, providing comprehensive situational awareness without sector silos.</p>
+                        <p class="sector-benefit">✅ <strong>Benefit:</strong> This cross-cutting approach means the same data structure works for ANY humanitarian sector, promoting interoperability and reusability.</p>
+                    </div>
+                </div>
+            `;
+
+            document.getElementById('sector-content').innerHTML = html;
+        }
+
+        // Render datasets
+        function renderDatasets() {
+            const container = document.getElementById('datasets-container');
+            const resultsInfo = document.getElementById('results-info');
+
+            resultsInfo.textContent = `${filteredDatasets.length} dataset${filteredDatasets.length !== 1 ? 's' : ''}`;
+
+            if (filteredDatasets.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">🔍</div>
+                        <h3>No Datasets Found</h3>
+                        <p>Try adjusting your filters or search terms.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            if (currentView === 'table') {
+                container.innerHTML = createTableView();
+            } else if (currentView === 'grid') {
+                container.innerHTML = createGridView();
+            } else if (currentView === 'hdxgrid') {
+                container.innerHTML = createHDXGridView();
+            } else if (currentView === 'crosssector') {
+                container.innerHTML = createCrossSectorView();
+            } else {
+                container.innerHTML = `
+                    <div class="datasets-grid">
+                        ${filteredDatasets.map((dataset, index) => createDatasetCard(dataset, index)).join('')}
+                    </div>
+                `;
+            }
+        }
+
+        // Create table view with expandable rows
+        function createTableView() {
+            let tableHTML = `
+                <div class="table-view">
+                    <table class="datasets-table">
+                        <thead>
+                            <tr>
+                                <th style="width: 40px;"></th>
+                                <th class="sortable ${sortColumn === 'Dataset Name' ? 'sorted-' + sortDirection : ''}" onclick="sortTable('Dataset Name')">Dataset</th>
+                                <th class="sortable ${sortColumn === 'Organization' ? 'sorted-' + sortDirection : ''}" onclick="sortTable('Organization')">Organization</th>
+                                <th class="sortable ${sortColumn === 'Domain' ? 'sorted-' + sortDirection : ''}" onclick="sortTable('Domain')">Domain</th>
+                                <th>Description</th>
+                                <th>Key Metadata</th>
+                                <th>Links</th>
+                            </tr>
+                        </thead>
+                        <tbody>`;
+            
+            filteredDatasets.forEach((dataset, index) => {
+                tableHTML += createTableRow(dataset, index);
+                tableHTML += createExpandedRow(dataset, index);
+            });
+            
+            tableHTML += `
+                        </tbody>
+                    </table>
+                </div>
+            `;
+            
+            return tableHTML;
+        }
+
+        // Create table row
+        function createTableRow(dataset, index) {
+            const metadata = [];
+            
+            if (dataset['Data Publication frequency']) {
+                metadata.push(`<div class="table-metadata-item"><span class="table-metadata-label">Pub. Freq:</span> ${dataset['Data Publication frequency']}</div>`);
+            }
+            if (dataset.Countries) {
+                const countries = dataset.Countries.length > 50 ? dataset.Countries.substring(0, 50) + '...' : dataset.Countries;
+                metadata.push(`<div class="table-metadata-item"><span class="table-metadata-label">Countries:</span> ${countries}</div>`);
+            }
+            if (dataset['Geographical disaggregation']) {
+                metadata.push(`<div class="table-metadata-item"><span class="table-metadata-label">Geo Level:</span> ${dataset['Geographical disaggregation']}</div>`);
+            }
+            
+            return `
+                <tr>
+                    <td>
+                        <button class="expand-btn" id="expand-btn-${index}" onclick="toggleRow(${index})"></button>
+                    </td>
+                    <td>
+                        <div class="table-dataset-name">${dataset['Dataset Name']}</div>
+                    </td>
+                    <td>
+                        <div class="table-owner">${dataset['Organization'] || '-'}</div>
+                    </td>
+                    <td>
+                        ${dataset.Domain ? `<span class="table-domain-badge">${dataset.Domain}</span>` : '-'}
+                    </td>
+                    <td>
+                        <div class="table-description">${dataset.Description || '-'}</div>
+                    </td>
+                    <td>
+                        <div class="table-metadata">
+                            ${metadata.join('') || '-'}
+                        </div>
+                    </td>
+                    <td>
+                        <div class="table-links">
+                            ${dataset['API or main ingestion source'] ? `<a href="${dataset['API or main ingestion source']}" class="table-link" target="_blank">API</a>` : ''}
+                            ${dataset['HDX Link'] ? `<a href="${dataset['HDX Link']}" class="table-link secondary" target="_blank">HDX</a>` : ''}
+                            ${dataset['Data dictionary / Schema'] ? `<a href="${dataset['Data dictionary / Schema']}" class="table-link secondary" target="_blank">Schema</a>` : ''}
+                        </div>
+                    </td>
+                </tr>
+            `;
+        }
+
+        // Create expanded row content
+        function createExpandedRow(dataset, index) {
+            const expandedFields = [
+                { label: 'Sources', value: dataset.Sources },
+                { label: 'Data Collection Frequency', value: dataset['Data collection frequency / ingestion'] },
+                { label: 'Disaggregation', value: dataset.Disaggregation },
+                { label: 'License', value: dataset.License },
+                { label: 'Other Technical Considerations', value: dataset['Other technical considerations'] }
+            ].filter(field => field.value);
+
+            return `
+                <tr class="expanded-row" id="expanded-${index}">
+                    <td colspan="7">
+                        <div class="expanded-content">
+                            <div class="expanded-grid">
+                                ${expandedFields.map(field => `
+                                    <div class="expanded-item">
+                                        <span class="expanded-label">${field.label}</span>
+                                        <span class="expanded-value">${field.value}</span>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+            `;
+        }
+
+        // Create dataset card HTML (same as before)
+        function createDatasetCard(dataset, index) {
+            return `
+                <article class="dataset-card" data-index="${index}" onclick="toggleCard(${index})">
+                    <div class="dataset-header">
+                        <div class="dataset-title">
+                            <h3>${dataset['Dataset Name']}</h3>
+                            <div class="dataset-owner">${dataset['Organization']}</div>
+                        </div>
+                        ${dataset.Domain ? `<div class="domain-badge">${dataset.Domain}</div>` : ''}
+                    </div>
+
+                    <p class="dataset-description">${dataset.Description || 'No description available.'}</p>
+
+                    <div class="expand-toggle">Show details</div>
+
+                    <div class="dataset-expanded-content">
+                        <div class="dataset-details">
+                            ${dataset.Sources ? `
+                                <div class="detail-item">
+                                    <span class="detail-label">Sources</span>
+                                    <span class="detail-value">${dataset.Sources}</span>
+                                </div>
+                            ` : ''}
+                            ${dataset['Data collection frequency / ingestion'] ? `
+                                <div class="detail-item">
+                                    <span class="detail-label">Collection Frequency</span>
+                                    <span class="detail-value">${dataset['Data collection frequency / ingestion']}</span>
+                                </div>
+                            ` : ''}
+                            ${dataset['Data Publication frequency'] ? `
+                                <div class="detail-item">
+                                    <span class="detail-label">Publication Frequency</span>
+                                    <span class="detail-value">${dataset['Data Publication frequency']}</span>
+                                </div>
+                            ` : ''}
+                            ${dataset.Disaggregation ? `
+                                <div class="detail-item">
+                                    <span class="detail-label">Disaggregation</span>
+                                    <span class="detail-value">${dataset.Disaggregation}</span>
+                                </div>
+                            ` : ''}
+                            ${dataset.Countries ? `
+                                <div class="detail-item">
+                                    <span class="detail-label">Countries</span>
+                                    <span class="detail-value">${dataset.Countries}</span>
+                                </div>
+                            ` : ''}
+                            ${dataset['Geographical disaggregation'] ? `
+                                <div class="detail-item">
+                                    <span class="detail-label">Geographical Disaggregation</span>
+                                    <span class="detail-value">${dataset['Geographical disaggregation']}</span>
+                                </div>
+                            ` : ''}
+                            ${dataset.License ? `
+                                <div class="detail-item">
+                                    <span class="detail-label">License</span>
+                                    <span class="detail-value">${dataset.License}</span>
+                                </div>
+                            ` : ''}
+                        </div>
+
+                        ${createLinksSection(dataset)}
+
+                        ${dataset['Other technical considerations'] ? `
+                            <div class="detail-item" style="margin-top: 0.75rem; padding-top: 0.75rem; border-top: 1px solid var(--border-color);">
+                                <span class="detail-label">Technical Considerations</span>
+                                <span class="detail-value">${dataset['Other technical considerations']}</span>
+                            </div>
+                        ` : ''}
+                    </div>
+                </article>
+            `;
+        }
+
+        // Create links section
+        function createLinksSection(dataset) {
+            const links = [];
+            
+            if (dataset['API or main ingestion source']) {
+                links.push(`<a href="${dataset['API or main ingestion source']}" class="link-btn" target="_blank" onclick="event.stopPropagation()">🔗 API</a>`);
+            }
+            if (dataset['HDX Link']) {
+                links.push(`<a href="${dataset['HDX Link']}" class="link-btn secondary" target="_blank" onclick="event.stopPropagation()">📊 HDX</a>`);
+            }
+            if (dataset['Data dictionary / Schema']) {
+                links.push(`<a href="${dataset['Data dictionary / Schema']}" class="link-btn secondary" target="_blank" onclick="event.stopPropagation()">📖 Schema</a>`);
+            }
+
+            return links.length > 0 ? `<div class="dataset-links">${links.join('')}</div>` : '';
+        }
+
+        // Export to CSV
+        function exportToCSV() {
+            const headers = [
+                'Dataset Name', 'Organization', 'Domain', 'Description', 'Sources',
+                'Data collection frequency / ingestion', 'Data Publication frequency',
+                'Disaggregation', 'Countries', 'Geographical disaggregation',
+                'Data dictionary / Schema', 'API or main ingestion source', 'HDX Link',
+                'License', 'Other technical considerations'
+            ];
+
+            let csvContent = headers.join(',') + '\n';
+
+            filteredDatasets.forEach(dataset => {
+                const row = headers.map(header => {
+                    let value = dataset[header] || '';
+                    // Escape quotes and wrap in quotes if contains comma, quote, or newline
+                    if (value.includes(',') || value.includes('"') || value.includes('\n')) {
+                        value = '"' + value.replace(/"/g, '""') + '"';
+                    }
+                    return value;
+                });
+                csvContent += row.join(',') + '\n';
+            });
+
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            const url = URL.createObjectURL(blob);
+            
+            const timestamp = new Date().toISOString().split('T')[0];
+            link.setAttribute('href', url);
+            link.setAttribute('download', `humanitarian_datasets_${timestamp}.csv`);
+            link.style.visibility = 'hidden';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        // Export to Excel
+        function exportToExcel() {
+            const headers = [
+                'Dataset Name', 'Organization', 'Domain', 'Description', 'Sources',
+                'Data collection frequency / ingestion', 'Data Publication frequency',
+                'Disaggregation', 'Countries', 'Geographical disaggregation',
+                'Data dictionary / Schema', 'API or main ingestion source', 'HDX Link',
+                'License', 'Other technical considerations'
+            ];
+
+            // Create HTML table
+            let tableHTML = '<table><thead><tr>';
+            headers.forEach(header => {
+                tableHTML += `<th>${header}</th>`;
+            });
+            tableHTML += '</tr></thead><tbody>';
+
+            filteredDatasets.forEach(dataset => {
+                tableHTML += '<tr>';
+                headers.forEach(header => {
+                    const value = dataset[header] || '';
+                    tableHTML += `<td>${value.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</td>`;
+                });
+                tableHTML += '</tr>';
+            });
+            tableHTML += '</tbody></table>';
+
+            // Create a Blob with the table
+            const blob = new Blob([`
+                <html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40">
+                <head>
+                    <meta charset="utf-8">
+                    <!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet>
+                    <x:Name>Datasets</x:Name>
+                    <x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet>
+                    </x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]-->
+                    <style>
+                        table { border-collapse: collapse; }
+                        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+                        th { background-color: #00ad78; color: white; font-weight: bold; }
+                    </style>
+                </head>
+                <body>${tableHTML}</body>
+                </html>
+            `], { type: 'application/vnd.ms-excel' });
+
+            const link = document.createElement('a');
+            const url = URL.createObjectURL(blob);
+            
+            const timestamp = new Date().toISOString().split('T')[0];
+            link.setAttribute('href', url);
+            link.setAttribute('download', `humanitarian_datasets_${timestamp}.xls`);
+            link.style.visibility = 'hidden';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+    </script>
+</body>
+</html>
